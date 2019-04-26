@@ -7,7 +7,7 @@ def hello_world():
 
 @app.route('/bot', methods=['GET', 'POST'])
 def main():
-	content = request.get_json()
+	content = request.get_json(force=True)
 	return content
 
 if __name__ == '__main__':
