@@ -3,7 +3,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return '<h1>Ku</h1>'
+	return '<h1>Ku</h1>'
 
 @app.route('/bot', methods=['POST'])
 def main():
@@ -11,4 +11,4 @@ def main():
 	return content
 
 if __name__ == '__main__':
-    app.run()
+	app.run()
