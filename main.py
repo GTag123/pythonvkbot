@@ -1,9 +1,11 @@
 from flask import Flask, request
 from os import getenv
+import requests
 app = Flask(__name__)
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
+
 @app.route('/')
 def hello_world():
 	print(token)
@@ -17,9 +19,16 @@ def main():
 	print('Json: ', content)
 	if content['secret'] != secret:
 		return 'Вы дурак, пошёл в жопу!'
-	if content['type'] == 'confirmation':
+	elif content['type'] == 'message_new':
+		params = {
+			'peer_id' = content['object']['peer_id']
+			'message' = 'Ваше сообщение: ' + content['object']['text']
+			'access_token' = token
+		}
+		requests.post('https://api.vk.com/method/messages.send', data=params)
+	elif content['type'] == 'confirmation':
 		return confirm
-	
+
 	return 'ok'
 
 if __name__ == '__main__':
