@@ -4,8 +4,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-	print(os.environ)
-	return '<h1>Ku</h1>'
+	print(os.getenv("test123"))
+	return os.getenv("test123")
 
 @app.route('/bot', methods=['POST'])
 def main():
