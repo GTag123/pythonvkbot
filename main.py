@@ -20,6 +20,8 @@ def main():
 	print('Json: ', content)
 	if content['secret'] != secret:
 		return 'Вы дурак, пошёл в жопу!'
+
+# ---------------------Main handler-----------------------
 	elif content['type'] == 'message_new':
 		params = {
 			'peer_id': content['object']['peer_id'],
@@ -30,9 +32,10 @@ def main():
 		}
 		sending = send.post('https://api.vk.com/method/messages.send', data=params)
 		print(sending.json())
+
+# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
 		return confirm
-
 	return 'ok'
 
 if __name__ == '__main__':
