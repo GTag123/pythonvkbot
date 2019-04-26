@@ -14,10 +14,10 @@ def hello_world():
 @app.route('/bot', methods=['POST'])
 def main():
 	content = request.get_json(force=True)
+	print('Json: ', content)
 	if content['secret'] != secret:
 		return 'Вы дурак, пошёл в жопу!'
-	print('Json: ', content)
-	return content
+	return 'ok'
 
 if __name__ == '__main__':
 	app.run()
