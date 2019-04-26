@@ -20,7 +20,7 @@ try:
     data = cur.fetchall()
 except psycopg2.Error as err:
     print("Query error: {}".format(err))
-print('Data: '+ str(data)
+print('Data: '+ str(data))
 
 @app.route('/')
 def hello_world():
