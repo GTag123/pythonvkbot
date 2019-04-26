@@ -1,15 +1,21 @@
 from flask import Flask, request
-import os
+from os import getenv
 app = Flask(__name__)
-
+token = getenv('apitoken')
+secret = getenv('secret')
+confirm = getenv('confirmation')
 @app.route('/')
 def hello_world():
-	print(os.getenv("test123"))
-	return os.getenv("test123")
+	print(token)
+	print(secret)
+	print(confirm)
+	return 'Дарова'
 
 @app.route('/bot', methods=['POST'])
 def main():
-	content = str(request.get_json(force=True))
+	content = request.get_json(force=True)
+	if content['secret'] != secret:
+		return 'Вы дурак, пошёл в жопу!'
 	print('Json: ', content)
 	return content
 
