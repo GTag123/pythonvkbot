@@ -11,7 +11,7 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-sql = "SELECT * FROM messages LIMIT 3"
+sql = "SELECT * FROM messages"
 
 try:
     cur = conn.cursor()
@@ -20,7 +20,7 @@ try:
     data = cur.fetchall()
 except psycopg2.Error as err:
     print("Query error: {}".format(err))
-print(data)
+print('Data: '+ str(data)
 
 @app.route('/')
 def hello_world():
