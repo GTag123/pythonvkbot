@@ -7,8 +7,8 @@ def hello_world():
 
 @app.route('/bot', methods=['GET', 'POST'])
 def main():
-	content = 1 # request.get_json()
-    return 'ku'
+ content = 1 # request.get_json()
+ return 'ku'
 
 if __name__ == '__main__':
     app.run()
