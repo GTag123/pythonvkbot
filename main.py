@@ -5,8 +5,9 @@ app = Flask(__name__)
 def hello_world():
 	return '<h1>Ku</h1>'
 
-@app.route('/bot', methods=['POST'])
+@app.route('/bot', methods=['GET','POST'])
 def main():
+	print('test\n')
 	content = str(request.get_json(force=True))
 	return content
 
