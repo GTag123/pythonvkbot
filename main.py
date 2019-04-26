@@ -29,7 +29,7 @@ def main():
 			'random_id': randint(0, 9999999)
 		}
 		sending = send.post('https://api.vk.com/method/messages.send', data=params)
-		print(send.json())
+		print(sending.json())
 	elif content['type'] == 'confirmation':
 		return confirm
 
