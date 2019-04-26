@@ -26,7 +26,7 @@ def main():
 			'message': 'Ваше сообщение: ' + content['object']['text'],
 			'access_token': token,
 			'v': '5.95',
-			'random_id': randint(9999999)
+			'random_id': randint(0, 9999999)
 		}
 		send = send.post('https://api.vk.com/method/messages.send', data=params)
 		print(send.json())
