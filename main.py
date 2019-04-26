@@ -21,8 +21,8 @@ def main():
 		return 'Вы дурак, пошёл в жопу!'
 	elif content['type'] == 'message_new':
 		params = {
-			'peer_id' = content['object']['peer_id']
-			'message' = 'Ваше сообщение: ' + content['object']['text']
+			'peer_id' = content['object']['peer_id'],
+			'message' = 'Ваше сообщение: ' + content['object']['text'],
 			'access_token' = token
 		}
 		requests.post('https://api.vk.com/method/messages.send', data=params)
