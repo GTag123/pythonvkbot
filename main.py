@@ -1,6 +1,7 @@
 from flask import Flask, request
 from os import getenv
-import requests
+import requests as send
+from random import randint
 app = Flask(__name__)
 token = getenv('apitoken')
 secret = getenv('secret')
@@ -21,11 +22,14 @@ def main():
 		return 'Вы дурак, пошёл в жопу!'
 	elif content['type'] == 'message_new':
 		params = {
-			'peer_id' = content['object']['peer_id'],
-			'message' = 'Ваше сообщение: ' + content['object']['text'],
-			'access_token' = token
+			'peer_id': content['object']['peer_id'],
+			'message': 'Ваше сообщение: ' + content['object']['text'],
+			'access_token': token,
+			'v': '5.95',
+			'random_id': randint(9999999)
 		}
-		requests.post('https://api.vk.com/method/messages.send', data=params)
+		send = send.post('https://api.vk.com/method/messages.send', data=params)
+		print(send.json())
 	elif content['type'] == 'confirmation':
 		return confirm
 
