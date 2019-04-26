@@ -2,10 +2,25 @@ from flask import Flask, request
 from os import getenv
 import requests as send
 from random import randint
+import psycopg2
+
 app = Flask(__name__)
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
+DATABASE_URL = getenv('DATABASE_URL')
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+
+sql = "SELECT * FROM messages LIMIT 3"
+
+try:
+    cur = conn.cursor()
+    # cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor) # by column name
+    cur.execute(sql)
+    data = cur.fetchall()
+except psycopg2.Error as err:
+    print("Query error: {}".format(err))
+print(data)
 
 @app.route('/')
 def hello_world():
