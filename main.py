@@ -1,11 +1,13 @@
 from flask import Flask, request
 app = Flask(__name__)
 
-@app.route('/bot', methods=['POST'])
-def hello_world():
-    return 'c4621a4c'
 @app.route('/')
 def hello_world():
-    print ('c4621a4c')
+    return '<h1>Ku</h1>'
+
+@app.route('/bot', methods=['POST'])
+def main():
+    return 'c4621a4c'
+
 if __name__ == '__main__':
     app.run()
