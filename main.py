@@ -17,6 +17,9 @@ def main():
 	print('Json: ', content)
 	if content['secret'] != secret:
 		return 'Вы дурак, пошёл в жопу!'
+	if content['type'] == 'confirmation':
+		return confirm
+	
 	return 'ok'
 
 if __name__ == '__main__':
