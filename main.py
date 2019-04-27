@@ -45,6 +45,5 @@ def main():
 	return 'ok'
 
 print('SELECT: ' + str(db.select('messages')))
-del db
 if __name__ == '__main__':
 	app.run()
