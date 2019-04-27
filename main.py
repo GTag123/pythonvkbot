@@ -44,7 +44,7 @@ def main():
 		return confirm
 	return 'ok'
 
-print('SELECT: ' + db.select('messages'))
+print('SELECT: ' + str(db.select('messages'))
 
 if __name__ == '__main__':
 	app.run()
