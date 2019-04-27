@@ -11,7 +11,7 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 
 db = database.Database(DATABASE_URL)
-print(db.select('messages'))
+db.new_action('INSERT INTO messages(text) VALUES("ураа")')
 
 @app.route('/')
 def hello_world():
@@ -43,6 +43,8 @@ def main():
 	elif content['type'] == 'confirmation':
 		return confirm
 	return 'ok'
+
+print('SELECT: ' + db.select('messages'))
 
 if __name__ == '__main__':
 	app.run()
