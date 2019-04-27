@@ -12,9 +12,9 @@ DATABASE_URL = getenv('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 with conn:
 	with conn.cursor() as cursor:
-		sql = "SELECT * FROM messages"
+		sql = "SELECT * FROM messages;"
 		cursor.execute(sql)
-		print('Data: ' + str(cursor.fetchall))
+		print('Data: ' + str(cursor.fetchall()))
 
 @app.route('/')
 def hello_world():
