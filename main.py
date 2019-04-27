@@ -11,7 +11,7 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 with conn:
-	with conn.cursor(cursor_factory= psycopg2.extras.DictCursor) as cursor:
+	with conn.cursor() as cursor:
 		sql = "SELECT * FROM messages"
 		cursor.execute(sql)
 		print('Data: ' + str(cursor.fetchall))
