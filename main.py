@@ -16,7 +16,8 @@ with conn:
 		sql = "SELECT * FROM messages;"
 		cursor.execute(sql)
 		result = cursor.fetchall()
-		print('Data: ' + str(result))
+		data = 'Data: ' + result[0]['text']
+		print(data)
 
 @app.route('/')
 def hello_world():
@@ -36,7 +37,7 @@ def main():
 	elif content['type'] == 'message_new':
 		params = {
 			'peer_id': content['object']['peer_id'],
-			'message': 'Ваше сообщение: ' + content['object']['text'],
+			'message': 'Ваше сообщение: %s\n%s' % (content['object']['text'], data),
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 9999999)
