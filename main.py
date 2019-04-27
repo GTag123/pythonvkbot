@@ -11,7 +11,7 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 
 db = database.Database(DATABASE_URL)
-db.new_action('INSERT INTO messages(text) VALUES("ураа")')
+db.new_action("INSERT INTO messages(text) VALUES('ураа');")
 
 @app.route('/')
 def hello_world():
