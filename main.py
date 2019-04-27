@@ -3,6 +3,7 @@ from os import getenv
 import requests as send
 from random import randint
 import psycopg2
+import psycopg2.extras
 
 app = Flask(__name__)
 token = getenv('apitoken')
@@ -11,7 +12,7 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 with conn:
-	with conn.cursor() as cursor:
+	with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
 		sql = "SELECT * FROM messages;"
 		cursor.execute(sql)
 		print('Data: ' + str(cursor.fetchall()))
