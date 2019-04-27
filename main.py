@@ -15,7 +15,8 @@ with conn:
 	with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
 		sql = "SELECT * FROM messages;"
 		cursor.execute(sql)
-		print('Data: ' + str(cursor.fetchall()))
+		result = cursor.fetchall()
+		print('Data: ' + str(result))
 
 @app.route('/')
 def hello_world():
