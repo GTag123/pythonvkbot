@@ -11,7 +11,7 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 
 db = database.Database(DATABASE_URL)
-db.new_action("INSERT INTO messages(text) VALUES('ураа');")
+db.new_action("INSERT INTO messages(text) VALUES('я лох');")
 
 @app.route('/')
 def hello_world():
@@ -31,7 +31,7 @@ def main():
 	elif content['type'] == 'message_new':
 		params = {
 			'peer_id': content['object']['peer_id'],
-			'message': 'Ваше сообщение: %s' % content['object']['text'],
+			'message': 'Ваше сообщение: %s\n%s' % (content['object']['text'], 'SELECT: ' + str(db.select('messages'))),
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 9999999)
@@ -45,6 +45,6 @@ def main():
 	return 'ok'
 
 print('SELECT: ' + str(db.select('messages')))
-
+del db
 if __name__ == '__main__':
 	app.run()
