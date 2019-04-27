@@ -2,22 +2,16 @@ from flask import Flask, request
 from os import getenv
 import requests as send
 from random import randint
-import psycopg2
-import psycopg2.extras
+import database
 
 app = Flask(__name__)
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-with conn:
-	with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
-		sql = "SELECT * FROM messages;"
-		cursor.execute(sql)
-		result = cursor.fetchall()
-		data = 'Data: ' + result[0]['text']
-		print(data)
+
+db = database.Database(DATABASE_URL)
+print(db.select('messages'))
 
 @app.route('/')
 def hello_world():
@@ -37,7 +31,7 @@ def main():
 	elif content['type'] == 'message_new':
 		params = {
 			'peer_id': content['object']['peer_id'],
-			'message': 'Ваше сообщение: %s\n%s' % (content['object']['text'], data),
+			'message': 'Ваше сообщение: %s' % content['object']['text'],
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 9999999)
