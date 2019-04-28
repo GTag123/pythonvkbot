@@ -35,7 +35,7 @@ def main():
     		'access_token': token,
     		'v': '5.95'}).json()['response'][0]
 
-		db.new_action("INSERT INTO messages(vk_id, name, message) VALUES('{}', '{} {}', {});".format(vk_id, getname['first_name'], getname['last_name'], message))
+		db.new_action("INSERT INTO messages(vk_id, name, message) VALUES('{}', '{} {}', '{}');".format(vk_id, getname['first_name'], getname['last_name'], message))
 		sending_params = {
 			'peer_id': vk_id,
 			'message': 'Ваше сообщение: %s\n%s' % (message, 'Последняя запись: ' + str(db.select('messages'))[-1]),
