@@ -11,7 +11,6 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 
 db = database.Database(DATABASE_URL)
-db.new_action("INSERT INTO messages(text) VALUES('я лох');")
 
 @app.route('/')
 def hello_world():
@@ -29,21 +28,25 @@ def main():
 
 # ---------------------Main handler-----------------------
 	elif content['type'] == 'message_new':
-		params = {
-			'peer_id': content['object']['peer_id'],
-			'message': 'Ваше сообщение: %s\n%s' % (content['object']['text'], 'SELECT: ' + str(db.select('messages'))),
+		vk_id = content['object']['from_id']
+		message = content['object']['text']
+		getname = send.post('https://api.vk.com/method/users.get', data={
+    		'user_ids': vk_id,
+    		'access_token': token,
+    		'v': '5.95'}).json()['response'][0]
+
+		db.new_action("INSERT INTO messages(vk_id, name, message) VALUES({}, '{} {}', {});".format(vk_id, getname['first_name'], getname['last_name'], message))
+		sending_params = {
+			'peer_id': vk_id,
+			'message': 'Ваше сообщение: %s\n%s' % (message, 'Последняя запись: ' + str(db.select('messages'))[-1]),
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 9999999)
-		}
-		sending = send.post('https://api.vk.com/method/messages.send', data=params)
-		print(sending.json())
-
+			}
+		send.post('https://api.vk.com/method/messages.send', data=params) # sending message
 # --------------------------------------------------------
 	elif content['type'] == 'confirmation':
 		return confirm
 	return 'ok'
-
-print('SELECT: ' + str(db.select('messages')))
 if __name__ == '__main__':
 	app.run()
