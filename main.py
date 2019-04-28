@@ -43,7 +43,7 @@ def main():
 			'v': '5.95',
 			'random_id': randint(0, 9999999)
 			}
-		print(db.select('messages')[-1]['time'])
+		print(str(db.select('messages')[-1]['time'])
 		send.post('https://api.vk.com/method/messages.send', data=sending_params) # sending message
 # --------------------------------------------------------
 	elif content['type'] == 'confirmation':
