@@ -29,7 +29,7 @@ def main(content):
 			'random_id': randint(0, 99999)
 			}
 		if message[0].lower() == '!привет':
-			sending_params['message'] = f'[id{vk_id}|{getname['first_name']}], привет!'
+			sending_params['message'] = f"[id{vk_id}|{getname['first_name']}], привет!"
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params) # sending message
 # --------------------------------------------------------
 	elif content['type'] == 'confirmation':
