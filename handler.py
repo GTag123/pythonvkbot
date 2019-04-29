@@ -25,6 +25,7 @@ def main(content):
 			'v': '5.95',
 			'random_id': randint(0, 99999)
 			}
+
 		if message[0] == '!привет':
 			getname = requests.post('https://api.vk.com/method/users.get', data={
     		'user_ids': vk_id,
