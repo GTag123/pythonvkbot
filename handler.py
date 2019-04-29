@@ -1,5 +1,7 @@
 import database
 from os import getenv
+import requests
+from random import randint
 
 token = getenv('apitoken')
 secret = getenv('secret')
@@ -16,7 +18,7 @@ def main(content):
 	elif content['type'] == 'message_new':
 		vk_id = content['object']['from_id']
 		message = content['object']['text']
-		getname = send.post('https://api.vk.com/method/users.get', data={
+		getname = requests.post('https://api.vk.com/method/users.get', data={
     		'user_ids': vk_id,
     		'access_token': token,
     		'v': '5.95'}).json()['response'][0]
@@ -27,9 +29,9 @@ def main(content):
 			'message': 'Ваше сообщение: %s\n%s' % (message, 'Последняя запись: ' + str(db.select('messages')[-1])),
 			'access_token': token,
 			'v': '5.95',
-			'random_id': randint(0, 9999999)
+			'random_id': randint(0, 99999)
 			}
-		send.post('https://api.vk.com/method/messages.send', data=sending_params) # sending message
+		requests.post('https://api.vk.com/method/messages.send', data=sending_params) # sending message
 # --------------------------------------------------------
 	elif content['type'] == 'confirmation':
 		return confirm

@@ -1,6 +1,4 @@
 from flask import Flask, request
-import requests as send
-from random import randint
 import handler
 
 app = Flask(__name__)
