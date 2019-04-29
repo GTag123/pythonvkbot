@@ -32,7 +32,7 @@ def main(content):
     		'v': '5.95'}).json()['response'][0]
 			sending_params['message'] = f"[id{vk_id}|{getname['first_name']}], привет!"
 		elif message[0] == '!анекдот':
-			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').json()['content']
+			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params) # sending message
 # --------------------------------------------------------
 	elif content['type'] == 'confirmation':
