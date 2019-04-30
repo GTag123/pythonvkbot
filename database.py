@@ -12,8 +12,8 @@ class Database:
 	def new_action(self, query):
 		self.cursor.execute(query)
 		self.conn.commit()
-	def select(self, table, column='*', limit='ALL'):
-		self.cursor.execute("SELECT {} FROM {} LIMIT {};".format(column, table, limit))
+	def select(self, query):
+		self.cursor.execute(f"{query}")
 		return self.cursor.fetchall()
 	def __del__(self):
 		self.cursor.close()
