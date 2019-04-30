@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 
+
 class Database:
 	def __init__(self, DATABASE_URL):
 		try:
@@ -9,12 +10,15 @@ class Database:
 			print('Connection opened!')
 		except:
 			print("Cannot connect to datase")
+
 	def new_action(self, query):
 		self.cursor.execute(query)
 		self.conn.commit()
+
 	def select(self, query):
 		self.cursor.execute(f"{query}")
 		return self.cursor.fetchall()
+
 	def __del__(self):
 		self.cursor.close()
 		self.conn.close()
