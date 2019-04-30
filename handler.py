@@ -12,7 +12,7 @@ db = database.Database(DATABASE_URL)
 check = db.select("SELECT EXISTS(select 1 from users where vk_id = 02133);")
 print(check)
 print(type(check[0]))
-print(type(check[0]['exists']))
+print(check[0]['exists'])
 
 def main(content):
 	if content['secret'] != secret:
