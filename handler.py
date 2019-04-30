@@ -32,7 +32,7 @@ def main(content):
 
 		sending_params = {
 			'peer_id': vk_id,
-			'message': 'Мои команды:\n!привет - бот скажет тебе привет\n!анекдот - бот расскажет анекдот\n!скажи - бот повторит твою фразу',
+			'message': 'Мои команды:\n!привет - бот скажет тебе привет\n!анекдот - бот расскажет анекдот\n!скажи [фраза]- бот повторит твою фразу\n!ник [ваш ник]- установить новый ник',
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 99999)
@@ -43,13 +43,16 @@ def main(content):
 		elif message[0] == '!анекдот':
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
 		elif message[0] == '!скажи':
-			sending_params['message'] = message
+			sending_params['message'] = message[1]
 		elif message[0] == '!ник':
-			if len(message[1]) <= 30:
-				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
-				sending_params['message'] = f"Ваш новый ник: [id{vk_id}|{message[1]}]!"
+			if len(message) > 1:
+				if len(message[1]) <= 30:
+					db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
+					sending_params['message'] = f"Ваш новый ник: [id{vk_id}|{message[1]}]!"
+				else:
+					sending_params['message'] = 'Ошибка! Длина ника не должна превышать 30 символов!'
 			else:
-				sending_params['message'] = 'Ошибка! Длина ника не должна превышать 30 символов!'
+				sending_params['message'] = 'Вы не указали ник!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
