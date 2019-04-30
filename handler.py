@@ -11,7 +11,8 @@ DATABASE_URL = getenv('DATABASE_URL')
 db = database.Database(DATABASE_URL)
 check = db.select("SELECT EXISTS(select 1 from users where vk_id = 02133);")
 print(check)
-print(type(check[0]))
+print(type(check[0][0]))
+print(check[0][0])
 print(check[0]['exists'])
 
 def main(content):
