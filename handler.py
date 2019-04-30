@@ -10,9 +10,6 @@ DATABASE_URL = getenv('DATABASE_URL')
 
 db = database.Database(DATABASE_URL)
 
-
-# db.select("SELECT EXISTS(select 1 from users where vk_id = 02133);")[0]['exists'] - bool
-
 def main(content):
 	if content['secret'] != secret:
 		return 'Secret key error! Please, go away!'
@@ -43,7 +40,10 @@ def main(content):
 		elif message[0] == '!анекдот':
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
 		elif message[0] == '!скажи':
-			sending_params['message'] = message[1]
+			if len(message) > 1:
+				sending_params['message'] = message[1]
+			else:
+				sending_params['message'] = 'А что сказать-то?)'
 		elif message[0] == '!ник':
 			if len(message) > 1:
 				if len(message[1]) <= 30:
