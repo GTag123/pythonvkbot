@@ -20,7 +20,7 @@ def main(content):
 		message[0] = message[0].lower()
 		sending_params = {
 			'peer_id': vk_id,
-			'message': 'Мои команды:\n!привет - бот скажет тебе привет\n!анекдот - бот расскажет анекдот',
+			'message': 'Мои команды:\n!привет - бот скажет тебе привет\n!анекдот - бот расскажет анекдот\n!скажи - бот повторит твою фразу',
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 99999)
@@ -34,7 +34,8 @@ def main(content):
 
 		elif message[0] == '!анекдот':
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
-
+		elif message[0] == '!скажи':
+			sending_params['message'] = message
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params) # sending message
 # --------------------------------------------------------
 	elif content['type'] == 'confirmation':
