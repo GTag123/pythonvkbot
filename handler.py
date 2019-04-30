@@ -44,6 +44,12 @@ def main(content):
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
 		elif message[0] == '!скажи':
 			sending_params['message'] = message
+		elif message[0] == '!ник':
+			if len(message[1]) <= 30:
+				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
+				sending_params['message'] = f"Ваш новый ник: [id{vk_id}|{message[1]}]!"
+			else:
+				sending_params['message'] = 'Ошибка! Длина ника не должна превышать 30 символов!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
