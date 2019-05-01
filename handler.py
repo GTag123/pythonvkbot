@@ -7,7 +7,7 @@ token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
-factor = (0.2, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
+factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 db = database.Database(DATABASE_URL)
 
 def casino(bet, vk_id):
@@ -18,11 +18,11 @@ def casino(bet, vk_id):
 	win = round(bet * x) - bet
 	db.new_action(f"UPDATE users SET balance = {balance + win} WHERE vk_id = {vk_id};")
 	if x > 1:
-		return f"Поздравляем! Ваш коэффициент: x{x}\nВы выиграли {win} монет!"
+		return f"Поздравляем!\nВы поставили {bet}\nВаш коэффициент: x{x}\nВы выиграли {win} монет!"
 	elif x < 1:
-		return f"Ваш коэффициент: x{x}\nК сожалению вы проиграли {abs(win)} монет!"
+		return f"Вы поставили {bet}\nВаш коэффициент: x{x}\nК сожалению вы проиграли {abs(win)} монет!"
 	else:
-		return f"Ваш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
+		return f"Вы поставили {bet}\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
 
 def main(content):
 	if content['secret'] != secret:
@@ -84,9 +84,9 @@ def main(content):
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			try:
-				sending_params['message'] = nickname + casino(int(message[1]), vk_id)
+				sending_params['message'] = f"{nickname},\n{casino(int(message[1]), vk_id)}"
 			except (ValueError, IndexError):
-				sending_params['message'] = f'{nickname}, Ошибка! Ставка должна быть целым числом!'
+				sending_params['message'] = f'{nickname}, ошибка! Ставка должна быть целым числом!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
