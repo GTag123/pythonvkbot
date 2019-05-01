@@ -1,14 +1,28 @@
 import database
 from os import getenv
 import requests
-from random import randint
+from random import randint, choice
 
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
-
+factor = (0.2, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 db = database.Database(DATABASE_URL)
+
+def casino(bet, vk_id):
+	balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
+	if  balance < bet:
+		return f"Ваша ставка - {bet} больше, чем ваш баланс - {balance}! Уменьшите ставку!"
+	x = choice(factor)
+	win = round(bet * x) - bet
+	db.new_action(f"UPDATE users SET balance = {balance + win} WHERE vk_id = {vk_id};")
+	if x > 1:
+		return f"Поздравляем! Ваш коэффициент: x{x}\nВы выиграли {win} монет!"
+	elif x < 1:
+		return f"Ваш коэффициент: x{x}\nК сожалению вы проиграли {abs(win)} монет!"
+	else:
+		return f"Ваш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
 
 def main(content):
 	if content['secret'] != secret:
@@ -41,7 +55,6 @@ def main(content):
 		}
 		if message[0] == '!привет':
 			sending_params['message'] = f"[id{vk_id}|{nickname}], привет!"
-
 		elif message[0] == '!анекдот':
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
 		elif message[0] == '!скажи':
@@ -68,6 +81,11 @@ def main(content):
 			&#128310;Ник: [id{vk_id}|{profile_info['name']}]
 			&#128176;Баланс: {profile_info['balance']} монет
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
+		elif message[0] == '!казино':
+			try:
+				sending_params['message'] = casino(int(message[1]), vk_id)
+			except (ValueError, IndexError):
+				sending_params['message'] = 'Ошибка! Ставка должна быть целым числом!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
