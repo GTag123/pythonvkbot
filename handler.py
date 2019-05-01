@@ -39,7 +39,7 @@ def main(content):
 				'access_token': token,
 				'v': '5.95'}).json()['response'][0]
 			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']}));")
-		nickname = '[id%s|%s}]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
+		nickname = '[id%s|%s]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
 
 		sending_params = {
 			'peer_id': vk_id,
