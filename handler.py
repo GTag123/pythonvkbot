@@ -53,6 +53,16 @@ def main(content):
 					sending_params['message'] = 'Ошибка! Длина ника не должна превышать 30 символов!'
 			else:
 				sending_params['message'] = 'Вы не указали ник!'
+		elif message[0] == '!профиль':
+			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
+			print(profile_info)
+			sending_params['message'] = f"""
+			Ваш профиль:
+			ID: {profile_info['id']}
+			Вконтакте ID: {profile_info['vk_id']}
+			Ник: {profile_info['name']}
+			Баланс: {profile_info['balance']} монет
+			Дата регистрации: {profile_info['reg_time']}"""
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
