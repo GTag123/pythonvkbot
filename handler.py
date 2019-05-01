@@ -29,7 +29,12 @@ def main(content):
 
 		sending_params = {
 			'peer_id': vk_id,
-			'message': 'Мои команды:\n!привет - бот скажет тебе привет\n!анекдот - бот расскажет анекдот\n!скажи [фраза]- бот повторит твою фразу\n!ник [ваш ник]- установить новый ник',
+			'message': """Привет! Вот мои команды:
+			&#128521;!привет - бот скажет тебе привет&#128521;
+			&#128514;!анекдот - бот расскажет анекдот&#128514;
+			&#128079;!скажи [фраза]- бот повторит твою фразу&#128079;	
+			&#128394;!ник [ваш ник]- установить новый ник&#128394;
+			&#128210;!профиль - ваш профиль&#128210;""",
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 99999)
@@ -57,12 +62,12 @@ def main(content):
 			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 			print(profile_info)
 			sending_params['message'] = f"""
-			Ваш профиль:
-			ID: {profile_info['id']}
-			Вконтакте ID: {profile_info['vk_id']}
-			Ник: {profile_info['name']}
-			Баланс: {profile_info['balance']} монет
-			Дата регистрации: {profile_info['reg_time']}"""
+			&#8265;Ваш профиль:
+			&#127380;ID: {profile_info['id']}
+			&#10004;Вконтакте ID: {profile_info['vk_id']}
+			&#128310;Ник: [id{vk_id}|{profile_info['name']}]
+			&#128176;Баланс: {profile_info['balance']} монет
+			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
