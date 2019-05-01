@@ -39,7 +39,7 @@ def main(content):
 				'access_token': token,
 				'v': '5.95'}).json()['response'][0]
 			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']}));")
-		nickname = db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name']
+		nickname = '[id%s|%s}]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
 
 		sending_params = {
 			'peer_id': vk_id,
@@ -54,7 +54,7 @@ def main(content):
 			'random_id': randint(0, 99999)
 		}
 		if message[0] == '!привет':
-			sending_params['message'] = f"[id{vk_id}|{nickname}], привет!"
+			sending_params['message'] = f"{nickname}, привет!"
 		elif message[0] == '!анекдот':
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
 		elif message[0] == '!скажи':
@@ -66,16 +66,16 @@ def main(content):
 			if len(message) > 1:
 				if len(message[1]) <= 30:
 					db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
-					sending_params['message'] = f"Ваш новый ник: [id{vk_id}|{message[1]}]!"
+					sending_params['message'] = f"{nickname}, Ваш новый ник: [id{vk_id}|{message[1]}]!"
 				else:
-					sending_params['message'] = 'Ошибка! Длина ника не должна превышать 30 символов!'
+					sending_params['message'] = f'{nickname}, Ошибка! Длина ника не должна превышать 30 символов!'
 			else:
-				sending_params['message'] = 'Вы не указали ник!'
+				sending_params['message'] = f'{nickname}, Вы не указали ник!'
 		elif message[0] == '!профиль':
 			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 			print(profile_info)
 			sending_params['message'] = f"""
-			&#8265;Ваш профиль:
+			&#8265;{nickname}, Ваш профиль:
 			&#127380;ID: {profile_info['id']}
 			&#10004;Вконтакте ID: {profile_info['vk_id']}
 			&#128310;Ник: [id{vk_id}|{profile_info['name']}]
@@ -83,9 +83,9 @@ def main(content):
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			try:
-				sending_params['message'] = casino(int(message[1]), vk_id)
+				sending_params['message'] = nickname + casino(int(message[1]), vk_id)
 			except (ValueError, IndexError):
-				sending_params['message'] = 'Ошибка! Ставка должна быть целым числом!'
+				sending_params['message'] = f'{nickname}, Ошибка! Ставка должна быть целым числом!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
