@@ -12,17 +12,17 @@ db = database.Database(DATABASE_URL)
 
 def casino(bet, vk_id):
 	balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
-	if  balance < bet:
-		return f"Ваша ставка - {bet} больше, чем ваш баланс - {balance}! Уменьшите ставку!"
+	if balance < bet:
+		return f"Ваша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
 	x = choice(factor)
 	win = round(bet * x) - bet
 	db.new_action(f"UPDATE users SET balance = {balance + win} WHERE vk_id = {vk_id};")
 	if x > 1:
-		return f"Поздравляем!\nВы поставили {bet}\nВаш коэффициент: x{x}\nВы выиграли {win} монет!"
+		return f"Поздравляем!\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы получили {win} монет!"
 	elif x < 1:
-		return f"Вы поставили {bet}\nВаш коэффициент: x{x}\nК сожалению вы проиграли {abs(win)} монет!"
+		return f"Вы поставили {bet} монет\nВаш коэффициент: x{x}\nК сожалению вы потеряли {abs(win)} монет!"
 	else:
-		return f"Вы поставили {bet}\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
+		return f"Вы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
 
 def main(content):
 	if content['secret'] != secret:
