@@ -95,7 +95,7 @@ def main(content):
 			&#10004;Вконтакте ID: {profile_info['vk_id']}
 			&#128310;Ник: [id{vk_id}|{profile_info['name']}]
 			&#128176;Баланс: {profile_info['balance']} монет
-			&#9203;Системное время: {sistime.strftime('%Y %B %d %H:%M:%S')}
+			&#9203;Системное время: {sistime.strftime('%H:%M:%S, %Y %B %d')}
 			&#8986;Бонус через: {bonusavailable}
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
