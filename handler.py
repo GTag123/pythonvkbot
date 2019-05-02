@@ -75,6 +75,7 @@ def main(content):
 		elif message[0] == '!профиль':
 			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 			print(profile_info)
+			print(profile_info['bonus_time'])
 			sending_params['message'] = f"""
 			&#8265;{nickname}, Ваш профиль:
 			&#127380;ID: {profile_info['id']}
