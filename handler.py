@@ -53,7 +53,7 @@ def main(content):
 		nickname = '[id%s|%s]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
 
 		sending_params = {
-			'peer_id': vk_id,
+			'peer_id': content['object']['peer_id'],
 			'message': """Привет! Вот мои команды:
 			&#128521;!привет - бот скажет тебе привет&#128521;
 			&#128514;!анекдот - бот расскажет анекдот&#128514;
