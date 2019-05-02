@@ -61,7 +61,8 @@ def main(content):
 			&#128394;!ник [ваш ник]- установить новый ник&#128394;
 			&#128210;!профиль - ваш профиль&#128210;
 			&#11088;!бонус - взять бонус(раз в 6 часов)&#11088;
-			&#128177;!казино [ставка] - казино&#128177;""",
+			&#128177;!казино [ставка] - казино&#128177;
+			&#8252;!репорт [текст] - откправить сообщение админу&#8252;""",
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 99999)
@@ -110,7 +111,7 @@ def main(content):
 		elif message[0] == '!репорт':
 			if len(message) > 1:
 				requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
-				sending_params[message] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
+				sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
 			else:
 				sending_params['message'] = 'Пустое сообщение!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
