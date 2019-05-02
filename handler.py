@@ -102,11 +102,17 @@ def main(content):
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			try:
-				sending_params['message'] = f"{nickname},\n{casino(int(message[1]), vk_id)}"
+				sending_params['message'] = f"{nickname},\n{casino(abs(int(message[1])), vk_id)}"
 			except (ValueError, IndexError):
 				sending_params['message'] = f'{nickname}, ошибка! Ставка должна быть целым числом!'
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
+		elif message[0] == '!репорт':
+			if len(message) > 1:
+				requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
+				sending_params[message] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
+			else:
+				sending_params['message'] = 'Пустое сообщение!'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
 	elif content['type'] == 'confirmation':
