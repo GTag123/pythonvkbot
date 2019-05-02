@@ -11,12 +11,6 @@ factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 bonus = (250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000)
 db = database.Database(DATABASE_URL)
 
-"""print(profile_info)
-			print(type(profile_info['bonus_time']))
-			print(profile_info['bonus_time'].timestamp())
-			print('Щас время: %s' % ctime(time()))
-			print(time() - profile_info['bonus_time'].timestamp())"""
-
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
@@ -90,12 +84,19 @@ def main(content):
 				sending_params['message'] = f'{nickname}, Вы не указали ник!'
 		elif message[0] == '!профиль':
 			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
+			sistime = datetime.now()
+			if sistime.timestamp() >= profile_info['bonus_time'].timestamp():
+				bonusavailable = 'уже доступен!'
+			else:
+				bonusavailable = f"{datetime.fromtimestamp(profile_info['bonus_time'].timestamp() - sistime.timestamp()).strftime('%H:%M:%S')} часов"
 			sending_params['message'] = f"""
 			&#8265;{nickname}, Ваш профиль:
 			&#127380;ID: {profile_info['id']}
 			&#10004;Вконтакте ID: {profile_info['vk_id']}
 			&#128310;Ник: [id{vk_id}|{profile_info['name']}]
 			&#128176;Баланс: {profile_info['balance']} монет
+			&#9203;Системное время: {sistime.strftime('%Y %B %d %H:%M:%S')}
+			&#8986;Бонус через: {bonusavailable}
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			try:
