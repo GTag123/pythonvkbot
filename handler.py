@@ -9,17 +9,18 @@ confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 bonus = (250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000)
+bonuswait = 21600  # from 1 to 86400
 db = database.Database(DATABASE_URL)
 
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
 	if now < bonus_time:
-		return f"""вы можете взять бонус не раньше: {datetime.fromtimestamp(bonus_time).strftime('%Y %B %d %H:%M:%S')}
+		return f"""вы можете взять бонус не раньше: {datetime.fromtimestamp(bonus_time).strftime('%H:%M:%S, %Y %B %d')}
 		Осталось подождать: {datetime.fromtimestamp(bonus_time - now).strftime('%H:%M:%S')}"""
 	win = choice(bonus)
-	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + 21600}) WHERE vk_id = {vk_id};")
-	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + 21600).strftime('%Y %B %d %H:%M:%S')}"
+	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE vk_id = {vk_id};")
+	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + bonuswait).strftime('%Y %B %d %H:%M:%S')}"
 def casino(bet, vk_id):
 	balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
 	if balance < bet:
