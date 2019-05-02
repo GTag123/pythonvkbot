@@ -21,11 +21,11 @@ def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
 	if now < bonus_time:
-		return f"""вы можете взять бонус не раньше: {datetime.fromtimestamp(bonus_time).strftime('%Y-%B-%d %H:%M:%S')}
+		return f"""вы можете взять бонус не раньше: {datetime.fromtimestamp(bonus_time).strftime('%Y %B %d %H:%M:%S')}
 		Осталось подождать: {datetime.fromtimestamp(bonus_time - now).strftime('%H:%M:%S')}"""
 	win = choice(bonus)
 	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + 21600}) WHERE vk_id = {vk_id};")
-	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(bonus_time).strftime('%Y-%B-%d %H:%M:%S')}"
+	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + 21600).strftime('%Y %B %d %H:%M:%S')}"
 def casino(bet, vk_id):
 	balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
 	if balance < bet:
