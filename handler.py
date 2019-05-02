@@ -77,6 +77,7 @@ def main(content):
 			print(profile_info)
 			print(type(profile_info['bonus_time']))
 			print(profile_info['bonus_time'].timestamp())
+			print(datetime.datetime.now())
 			sending_params['message'] = f"""
 			&#8265;{nickname}, Ваш профиль:
 			&#127380;ID: {profile_info['id']}
