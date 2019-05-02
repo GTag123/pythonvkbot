@@ -2,7 +2,7 @@ import database
 from os import getenv
 import requests
 from random import randint, choice
-
+from time import time
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
@@ -77,7 +77,8 @@ def main(content):
 			print(profile_info)
 			print(type(profile_info['bonus_time']))
 			print(profile_info['bonus_time'].timestamp())
-			print(datetime.datetime.now())
+			print('Щас время: %s' % time())
+			print(profile_info['bonus_time'].timestamp() - time())
 			sending_params['message'] = f"""
 			&#8265;{nickname}, Ваш профиль:
 			&#127380;ID: {profile_info['id']}
