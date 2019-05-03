@@ -40,13 +40,6 @@ keyboard = dumps({
 				"color": "primary"
 			}],
 		[{
-			"action": {
-				"type": "text",
-				"payload": "{\"casino\": \"1000\"}",
-				"label": "!казино 1000"
-			},
-			"color": "default"
-		},{
 				"action": {
 					"type": "text",
 					"payload": "{\"casino\": \"10000\"}",
