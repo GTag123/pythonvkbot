@@ -150,14 +150,14 @@ def main(content):
 			&#11088;!бонус - взять бонус(раз в 6 часов)&#11088;
 			&#128177;!казино [ставка] - казино&#128177;
 			&#8252;!репорт [текст] - откправить сообщение админу&#8252;""",
+			'keyboard': '{"buttons":[],"one_time":True}',
 			'access_token': token,
 			'v': '5.95',
 			'random_id': randint(0, 99999)
 		}
 		if 'payload' in content['object']:
-			print(content['object']['payload'])
-			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=loads(content['object']['payload'])['casino'])}"
-			# sending_params['keyboard'] = keyboard
+			payload_value = loads(content['object']['payload'])['casino']
+			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
 			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
 			return 'ok'
 		if message[0] == '!привет':
