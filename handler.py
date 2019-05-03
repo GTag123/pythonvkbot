@@ -19,7 +19,7 @@ keyboard = dumps({
 			"action": {
 				"type": "text",
 				"payload": "{\"casino\": \"all\"}",
-				"label": "!казино всё"
+				"label": "Поставить всё"
 			},
 			"color": "negative"
 		}],
@@ -27,7 +27,7 @@ keyboard = dumps({
 			"action": {
 				"type": "text",
 				"payload": "{\"casino\": \"half\"}",
-				"label": "!казино 1\\2"
+				"label": "Поставить 1\\2"
 			},
 			"color": "positive"
 		},
@@ -35,7 +35,7 @@ keyboard = dumps({
 				"action": {
 					"type": "text",
 					"payload": "{\"casino\": \"quarter\"}",
-					"label": "!казино 1\\2"
+					"label": "Поставить 1\\4"
 				},
 				"color": "primary"
 			}],
@@ -43,28 +43,28 @@ keyboard = dumps({
 				"action": {
 					"type": "text",
 					"payload": "{\"casino\": \"10000\"}",
-					"label": "!казино 1000"
+					"label": "10к"
 				},
 				"color": "default"
 		},{
 				"action": {
 					"type": "text",
 					"payload": "{\"casino\": \"25000\"}",
-					"label": "!казино 5000"
+					"label": "25к"
 				},
 				"color": "default"
 		},{
 				"action": {
 					"type": "text",
 					"payload": "{\"casino\": \"50000\"}",
-					"label": "!казино 10000"
+					"label": "50к"
 				},
 				"color": "default"
 		},{
 				"action": {
 					"type": "text",
 					"payload": "{\"casino\": \"100000\"}",
-					"label": "!казино 100000"
+					"label": "100к"
 				},
 				"color": "default"
 		}
