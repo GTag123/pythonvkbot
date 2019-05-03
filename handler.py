@@ -75,7 +75,20 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
-
+def shop(params):
+	string = 'Магазин:\n\n1. Телефоны:'
+	for i in db.select("SELECT * FROM phones WHERE id >= 1 ORDER BY id ASC;"):
+		string += f"\n\t{i['id']}. {i['name']}. Цена: {i['price']} монет"
+	string += '\n\n2. Автомобили:'
+	for i in db.select("SELECT * FROM cars WHERE id >= 1 ORDER BY id ASC;"):
+		string += f"\n\t{i['id']}. {i['name']}. Цена: {i['price']} монет"
+	string += '\n\n3. Недвижемость:'
+	for i in db.select("SELECT * FROM homes WHERE id >= 1 ORDER BY id ASC;"):
+		string += f"\n\t{i['id']}. {i['name']}. Цена: {i['price']} монет"
+	string += '\n\n4. Бизнесы:'
+	for i in db.select("SELECT * FROM business WHERE id >= 1 ORDER BY id ASC;"):
+		string += f"\n\t{i['id']}. {i['name']}. Цена: {i['price']} монет. Прибыль: {i['profit']} монет в час"
+	return string
 def own(id):
 	string = '&#128273;Ваше имущество:'
 	flag = False
@@ -108,7 +121,6 @@ def get_bonus(vk_id):
 	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE vk_id = {vk_id};")
 	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + bonuswait).strftime('%Y %B %d %H:%M:%S')}"
 
-
 def casino(bet, vk_id, balance):
 	if balance < bet:
 		return f"\nВаша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
@@ -121,7 +133,6 @@ def casino(bet, vk_id, balance):
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nК сожалению вы потеряли {abs(win)} монет!"
 	else:
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
-
 
 def getbet(message, balance, vk_id, payload=False):
 	if not payload:
@@ -142,7 +153,6 @@ def getbet(message, balance, vk_id, payload=False):
 		return casino(balance // 4, vk_id, balance)
 	else:
 		return casino(int(payload), vk_id, balance)
-
 
 def main(content):
 	if content['secret'] != secret:
@@ -210,6 +220,8 @@ def main(content):
 				sending_params['message'] = f'{nickname}, Ошибка! Длина ника не должна превышать 30 символов!'
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
+		elif message[0] == '!магазин':
+			sending_params['message'] = f"{nickname}, {shop(message[1])}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
