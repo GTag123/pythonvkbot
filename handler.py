@@ -75,7 +75,7 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
-def shop(params):
+def shoplist():
 	string = '\nМагазин:\n1. Телефоны:'
 	for i in db.select("SELECT * FROM phones WHERE id >= 1 ORDER BY id ASC;"):
 		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
@@ -88,7 +88,9 @@ def shop(params):
 	string += '\n\n4. Бизнесы:'
 	for i in db.select("SELECT * FROM business WHERE id >= 1 ORDER BY id ASC;"):
 		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет. Прибыль: {i['profit']} монет в час"
+	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - купить BMW x7'
 	return string
+
 def own(id):
 	string = '&#128273;Ваше имущество:'
 	flag = False
@@ -221,7 +223,7 @@ def main(content):
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
 		elif message[0] == '!магазин':
-			sending_params['message'] = f"{nickname}, {shop(message[1])}"
+			sending_params['message'] = f"{nickname}, {shoplist()}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
