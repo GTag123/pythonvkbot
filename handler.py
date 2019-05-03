@@ -180,7 +180,7 @@ def main(content):
 			&#8986;Бонус через: {bonusavailable}
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
-			sending_params['message'] = f"{nickname}, {casino(message[1], vk_id, balance)}"
+			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id)}"
 			sending_params['keyboard'] = keyboard
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
