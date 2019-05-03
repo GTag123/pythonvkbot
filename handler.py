@@ -88,9 +88,16 @@ def shoplist():
 	string += '\n\n4. Бизнесы:'
 	for i in db.select("SELECT * FROM business WHERE id >= 1 ORDER BY id ASC;"):
 		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет. Прибыль: {i['profit']} монет в час"
-	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - купить BMW x7'
+	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - чтобы купить BMW x7'
 	return string
 
+def shop(params, id):
+	params = params.split()
+	kind = {'1': ('phone', 'phones'), '2': ('car', 'cars'), '3': ('home', 'homes'), '4': ('business', 'business')}
+	product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]};")[0]
+	db.new_action(f"UPDATE users SET balance = balance - {product['price']} WHERE id = {id}")
+	db.new_action(f"UPDATE own SET {kind[params[0]][0]} = {product['id']} WHERE id = {id};")
+	return f"вы успешно купили {product['name']} за {product['price']} монет"
 def own(id):
 	string = '&#128273;Ваше имущество:'
 	flag = False
@@ -190,12 +197,12 @@ def main(content):
 			'v': '5.95',
 			'random_id': randint(0, 99999)
 		}
+		profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 		if 'payload' in content['object']:
 			payload_value = loads(content['object']['payload'])['casino']
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
 			sending_params['keyboard'] = keyboard
 		elif message[0] == '!профиль':
-			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 			sistime = datetime.now()
 			if sistime.timestamp() >= profile_info['bonus_time'].timestamp():
 				bonusavailable = 'уже доступен!'
@@ -223,7 +230,7 @@ def main(content):
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
 		elif message[0] == '!магазин':
-			sending_params['message'] = f"{nickname}, {shoplist()}"
+			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'])}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
