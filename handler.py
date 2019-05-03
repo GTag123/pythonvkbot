@@ -13,42 +13,71 @@ factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 bonus = (250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000)
 bonuswait = 21600  # from 1 to 86400
 keyboard = dumps({
-    "one_time": False,
-    "buttons": [
-      [{
-        "action": {
-          "type": "text",
-          "payload": "{\"button\": \"1\"}",
-          "label": "Red"
-        },
-        "color": "negative"
-      },
-     {
-        "action": {
-          "type": "text",
-          "payload": "{\"button\": \"2\"}",
-          "label": "Green"
-        },
-        "color": "positive"
-      }],
-      [{
-        "action": {
-          "type": "text",
-          "payload": "{\"button\": \"3\"}",
-          "label": "White"
-        },
-        "color": "default"
-      },
-     {
-        "action": {
-          "type": "text",
-          "payload": "{\"button\": \"4\"}",
-          "label": "Blue"
-        },
-        "color": "primary"
-      }]
-    ]
-  }, ensure_ascii=False)
+	"one_time": True,
+	"buttons": [
+		[{
+			"action": {
+				"type": "text",
+				"payload": "{\"casino\": \"all\"}",
+				"label": "!казино всё"
+			},
+			"color": "negative"
+		}],
+		[{
+			"action": {
+				"type": "text",
+				"payload": "{\"casino\": \"half\"}",
+				"label": "!казино 1\\2"
+			},
+			"color": "positive"
+		},
+			{
+				"action": {
+					"type": "text",
+					"payload": "{\"casino\": \"quarter\"}",
+					"label": "!казино 1\\2"
+				},
+				"color": "primary"
+			}],
+		[{
+			"action": {
+				"type": "text",
+				"payload": "{\"casino\": \"1000\"}",
+				"label": "!казино 1000"
+			},
+			"color": "default"
+		},{
+				"action": {
+					"type": "text",
+					"payload": "{\"casino\": \"10000\"}",
+					"label": "!казино 1000"
+				},
+				"color": "default"
+		},{
+				"action": {
+					"type": "text",
+					"payload": "{\"casino\": \"25000\"}",
+					"label": "!казино 5000"
+				},
+				"color": "default"
+		},{
+				"action": {
+					"type": "text",
+					"payload": "{\"casino\": \"50000\"}",
+					"label": "!казино 10000"
+				},
+				"color": "default"
+		},{
+				"action": {
+					"type": "text",
+					"payload": "{\"casino\": \"100000\"}",
+					"label": "!казино 100000"
+				},
+				"color": "default"
+		}
+		]
+	]
+}, ensure_ascii=False)
 
 db = database.Database(DATABASE_URL)
 
