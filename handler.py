@@ -1,16 +1,55 @@
 import database
 from os import getenv
 import requests
+from json import dumps
 from random import randint, choice
 from datetime import datetime
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
-refer = ('бот', '!бот', 'помощь', 'помочь', 'хелп', 'хелпа', '!помощь', 'команды', '!команды', 'эй')
+refer = ('бот', '!бот', 'помощь', 'помочь', 'хелп', 'хелпа', '!помощь', 'команды', '!команды', 'эй', 'начать')
 factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 bonus = (250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000)
 bonuswait = 21600  # from 1 to 86400
+keyboard = dumps({
+    "one_time": False,
+    "buttons": [
+      [{
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"1\"}",
+          "label": "Red"
+        },
+        "color": "negative"
+      },
+     {
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"2\"}",
+          "label": "Green"
+        },
+        "color": "positive"
+      }],
+      [{
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"3\"}",
+          "label": "White"
+        },
+        "color": "default"
+      },
+     {
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"4\"}",
+          "label": "Blue"
+        },
+        "color": "primary"
+      }]
+    ]
+  }, ensure_ascii=False)
+
 db = database.Database(DATABASE_URL)
 
 def get_bonus(vk_id):
@@ -105,6 +144,7 @@ def main(content):
 		elif message[0] == '!казино':
 			try:
 				sending_params['message'] = f"{nickname},\n{casino(abs(int(message[1])), vk_id)}"
+				sending_params['keyboard'] = keyboard
 			except (ValueError, IndexError):
 				sending_params['message'] = f'{nickname}, ошибка! Ставка должна быть целым числом!'
 		elif message[0] == '!бонус':
