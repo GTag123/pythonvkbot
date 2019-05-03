@@ -75,6 +75,7 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
+
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
@@ -84,6 +85,8 @@ def get_bonus(vk_id):
 	win = choice(bonus)
 	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE vk_id = {vk_id};")
 	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + bonuswait).strftime('%Y %B %d %H:%M:%S')}"
+
+
 def casino(bet, vk_id, balance):
 	if balance < bet:
 		return f"\nВаша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
@@ -96,25 +99,27 @@ def casino(bet, vk_id, balance):
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nК сожалению вы потеряли {abs(win)} монет!"
 	else:
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
+
+
 def getbet(message, balance, vk_id, payload = False):
 	if not payload:
 		try:
-			return casino(abs(int(message)), balance, vk_id)
+			return casino(abs(int(message)), vk_id, balance)
 		except ValueError:
 			if message.lower() in ('*', 'всё', 'все', 'all'):
-				return casino(balance, balance, vk_id)
+				return casino(balance, vk_id, balance)
 			elif message.lower() in ('1/2', 'половина'):
-				return casino(balance // 2, balance, vk_id)
+				return casino(balance // 2, vk_id, balance)
 			else:
 				return 'ошибка! Ставка должна быть целым числом!'
 	if payload == 'all':
-		return casino(balance, balance, vk_id)
+		return casino(balance, vk_id, balance)
 	elif payload == 'half':
-		return casino(balance // 2, balance, vk_id)
+		return casino(balance // 2, vk_id, balance)
 	elif payload == 'quarter':
-		return casino(balance // 4, balance, vk_id)
+		return casino(balance // 4, vk_id, balance)
 	else:
-		return casino(int(payload), balance, vk_id)
+		return casino(int(payload), vk_id, balance)
 
 
 def main(content):
