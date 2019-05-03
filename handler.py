@@ -101,7 +101,7 @@ def casino(bet, vk_id, balance):
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
 
 
-def getbet(message, balance, vk_id, payload = False):
+def getbet(message, balance, vk_id, payload=False):
 	if not payload:
 		try:
 			return casino(abs(int(message)), vk_id, balance)
@@ -155,7 +155,10 @@ def main(content):
 			'random_id': randint(0, 99999)
 		}
 		if 'payload' in content['object']:
-			print(content['object']['payload'])
+			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=content['object']['casino'])}"
+			sending_params['keyboard'] = keyboard
+			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
+			return 'ok'
 		if message[0] == '!привет':
 			sending_params['message'] = f"{nickname}, привет!"
 		elif message[0] == '!анекдот':
