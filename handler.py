@@ -84,19 +84,38 @@ def get_bonus(vk_id):
 	win = choice(bonus)
 	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE vk_id = {vk_id};")
 	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + bonuswait).strftime('%Y %B %d %H:%M:%S')}"
-def casino(bet, vk_id):
-	balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
+def casino(bet, vk_id, balance):
 	if balance < bet:
-		return f"Ваша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
+		return f"\nВаша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
 	x = choice(factor)
 	win = round(bet * x) - bet
 	db.new_action(f"UPDATE users SET balance = {balance + win} WHERE vk_id = {vk_id};")
 	if x > 1:
-		return f"Поздравляем!\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы получили {win} монет!"
+		return f"\nПоздравляем!\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы получили {win} монет!"
 	elif x < 1:
-		return f"Вы поставили {bet} монет\nВаш коэффициент: x{x}\nК сожалению вы потеряли {abs(win)} монет!"
+		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nК сожалению вы потеряли {abs(win)} монет!"
 	else:
-		return f"Вы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
+		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
+def getbet(message, balance, vk_id, payload = False):
+	if not payload:
+		try:
+			return casino(abs(int(message)), balance, vk_id)
+		except ValueError:
+			if message.lower() in ('*', 'всё', 'все', 'all'):
+				return casino(balance, balance, vk_id)
+			elif message.lower() in ('1/2', 'половина'):
+				return casino(balance // 2, balance, vk_id)
+			else:
+				return 'ошибка! Ставка должна быть целым числом!'
+	if payload == 'all':
+		return casino(balance, balance, vk_id)
+	elif payload == 'half':
+		return casino(balance // 2, balance, vk_id)
+	elif payload == 'quarter':
+		return casino(balance // 4, balance, vk_id)
+	else:
+		return casino(int(payload), balance, vk_id)
+
 
 def main(content):
 	if content['secret'] != secret:
@@ -114,7 +133,7 @@ def main(content):
 				'v': '5.95'}).json()['response'][0]
 			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']}));")
 		nickname = '[id%s|%s]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
-
+		balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
 		sending_params = {
 			'peer_id': content['object']['peer_id'],
 			'message': """Привет! Вот мои команды:
@@ -167,11 +186,8 @@ def main(content):
 			&#8986;Бонус через: {bonusavailable}
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
-			try:
-				sending_params['message'] = f"{nickname},\n{casino(abs(int(message[1])), vk_id)}"
-				sending_params['keyboard'] = keyboard
-			except (ValueError, IndexError):
-				sending_params['message'] = f'{nickname}, ошибка! Ставка должна быть целым числом!'
+			sending_params['message'] = f"{nickname}, {casino(message[1], vk_id, balance)}"
+			sending_params['keyboard'] = keyboard
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
 		elif message[0] == '!репорт':
