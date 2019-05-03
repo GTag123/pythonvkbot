@@ -1,7 +1,7 @@
 import database
 from os import getenv
 import requests
-from json import dumps
+from json import dumps, loads
 from random import randint, choice
 from datetime import datetime
 token = getenv('apitoken')
@@ -156,9 +156,8 @@ def main(content):
 		}
 		if 'payload' in content['object']:
 			print(content['object']['payload'])
-			print(type(content['object']['payload']))
-			print(content['object']['payload']['casino'])
-			print(type(content['object']['payload']['casino']))
+			print(type(loads(content['object']['payload'])))
+			print(loads(content['object']['payload'])['casino'])
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=content['object']['payload']['casino'])}"
 			# sending_params['keyboard'] = keyboard
 			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
