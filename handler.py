@@ -158,6 +158,7 @@ def main(content):
 		if 'payload' in content['object']:
 			payload_value = loads(content['object']['payload'])['casino']
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
+			sending_params['keyboard'] = keyboard
 			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
 			return 'ok'
 		if message[0] == '!привет':
