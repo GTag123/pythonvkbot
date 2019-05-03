@@ -79,7 +79,8 @@ def own(info):
 	string = "&#128273;Ваше имущество:"
 	own = {'phone': info['phone'], 'car': info['car'], 'home': info['home'], 'business': info['business']}
 	for i in own:
-		string += f'\n{i} - {own[i]}'
+		if own[i] != 'NULL':
+			string += f'\n{i} - {own[i]}'
 	return string
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
