@@ -13,32 +13,8 @@ factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 bonus = (250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000)
 bonuswait = 21600  # from 1 to 86400
 keyboard = dumps({
-	"one_time": True,
+	"one_time": False,
 	"buttons": [
-		[{
-			"action": {
-				"type": "text",
-				"payload": "{\"casino\": \"all\"}",
-				"label": "Поставить всё"
-			},
-			"color": "negative"
-		}],
-		[{
-			"action": {
-				"type": "text",
-				"payload": "{\"casino\": \"half\"}",
-				"label": "Поставить 1\\2"
-			},
-			"color": "positive"
-		},
-			{
-				"action": {
-					"type": "text",
-					"payload": "{\"casino\": \"quarter\"}",
-					"label": "Поставить 1\\4"
-				},
-				"color": "primary"
-			}],
 		[{
 				"action": {
 					"type": "text",
@@ -68,7 +44,32 @@ keyboard = dumps({
 				},
 				"color": "default"
 		}
-		]
+		],
+		[{
+			"action": {
+				"type": "text",
+				"payload": "{\"casino\": \"half\"}",
+				"label": "Поставить 1\\2"
+			},
+			"color": "positive"
+		},
+			{
+				"action": {
+					"type": "text",
+					"payload": "{\"casino\": \"quarter\"}",
+					"label": "Поставить 1\\4"
+				},
+				"color": "primary"
+		}],
+		[{
+			"action": {
+				"type": "text",
+				"payload": "{\"casino\": \"all\"}",
+				"label": "Поставить всё"
+			},
+			"color": "negative"
+		}]
+
 	]
 }, ensure_ascii=False)
 
@@ -129,6 +130,8 @@ def main(content):
 			'v': '5.95',
 			'random_id': randint(0, 99999)
 		}
+		if 'payload' in content['object']:
+			print(content['object']['payload'])
 		if message[0] == '!привет':
 			sending_params['message'] = f"{nickname}, привет!"
 		elif message[0] == '!анекдот':
