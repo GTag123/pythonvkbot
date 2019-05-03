@@ -195,7 +195,7 @@ def main(content):
 			sending_params['message'] = message[1]
 		elif message[0] == '!привет':
 			sending_params['message'] = f"{nickname}, привет!"
-		elif not message[0] in refer:
+		elif (not message[0] in refer) and (vk_id != content['object']['peer_id']):
 			return 'ok'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
 	# --------------------------------------------------------
