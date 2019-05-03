@@ -75,13 +75,13 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
-def own(info):
-	string = "&#128273;Ваше имущество:"
-	own = {'phone': info['phone'], 'car': info['car'], 'home': info['home'], 'business': info['business']}
-	for i in own:
-		if own[i] != 'NULL':
-			string += f'\n{i} - {own[i]}'
-	return string
+
+def own(id):
+	things = db.select(f"""SELECT p.name as phone, c.name as car, h.name as home, b.name as business 
+	FROM own o, phones p, cars c, homes h, business b 
+	WHERE o.id = {id} AND o.phone =  p.id AND o.car = c.id AND o.home = h.id AND o.business = b.id;""")[0]
+	print(things)
+
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
@@ -143,6 +143,7 @@ def main(content):
 				'access_token': token,
 				'v': '5.95'}).json()['response'][0]
 			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']}));")
+			db.new_action("INSERT INTO own DEFAULT VALUES;")
 		nickname = '[id%s|%s]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
 		balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
 		sending_params = {
@@ -166,10 +167,7 @@ def main(content):
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
 			sending_params['keyboard'] = keyboard
 		elif message[0] == '!профиль':
-			profile_info = db.select(f"""SELECT u.id, u.vk_id, u.name, u.balance, u.bonus_time, 
-			u.reg_time, p.name as phone, c.name as car, h.name as home, b.name as business 
-			FROM users u, phones p, cars c, homes h, business b 
-			WHERE vk_id = {vk_id} AND u.phone = p.id AND u.car = c.id AND u.home=h.id AND u.business=b.id;""")[0]
+			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 			sistime = datetime.now()
 			if sistime.timestamp() >= profile_info['bonus_time'].timestamp():
 				bonusavailable = 'уже доступен!'
@@ -183,7 +181,7 @@ def main(content):
 			&#128176;Баланс: {profile_info['balance']} монет
 			&#9203;Системное время: {sistime.strftime('%H:%M:%S, %Y %B %d')}
 			&#8986;Бонус через: {bonusavailable}
-			\n{own(profile_info)}\n
+			\n{own(profile_info['id'])}\n
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id)}"
