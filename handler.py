@@ -155,8 +155,8 @@ def main(content):
 			'random_id': randint(0, 99999)
 		}
 		if 'payload' in content['object']:
-			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=content['object']['casino'])}"
-			sending_params['keyboard'] = keyboard
+			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=content['object']['payload']['casino'])}"
+			# sending_params['keyboard'] = keyboard
 			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
 			return 'ok'
 		if message[0] == '!привет':
