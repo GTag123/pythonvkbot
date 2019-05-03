@@ -80,7 +80,12 @@ def own(id):
 	things = db.select(f"""SELECT p.name as phone, c.name as car, h.name as home, b.name as business 
 	FROM own o, phones p, cars c, homes h, business b 
 	WHERE o.id = {id} AND o.phone =  p.id AND o.car = c.id AND o.home = h.id AND o.business = b.id;""")[0]
-	print(things)
+	print(type(things))
+	for i in things:
+		print(i)
+	print('continue...')
+	for i in things:
+		print(things[i])
 
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
