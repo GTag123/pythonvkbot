@@ -156,9 +156,7 @@ def main(content):
 		}
 		if 'payload' in content['object']:
 			print(content['object']['payload'])
-			print(type(loads(content['object']['payload'])))
-			print(type(loads(content['object']['payload'])['casino']))
-			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=content['object']['payload']['casino'])}"
+			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=loads(content['object']['payload'])['casino'])}"
 			# sending_params['keyboard'] = keyboard
 			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
 			return 'ok'
