@@ -155,6 +155,10 @@ def main(content):
 			'random_id': randint(0, 99999)
 		}
 		if 'payload' in content['object']:
+			print(content['object']['payload'])
+			print(type(content['object']['payload']))
+			print(content['object']['payload']['casino'])
+			print(type(content['object']['payload']['casino']))
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=content['object']['payload']['casino'])}"
 			# sending_params['keyboard'] = keyboard
 			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
