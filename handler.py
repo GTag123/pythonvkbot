@@ -183,7 +183,7 @@ def main(content):
 			&#128176;Баланс: {profile_info['balance']} монет
 			&#9203;Системное время: {sistime.strftime('%H:%M:%S, %Y %B %d')}
 			&#8986;Бонус через: {bonusavailable}
-			{own(profile_info)}
+			\n{own(profile_info)}\n
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id)}"
