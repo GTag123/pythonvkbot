@@ -159,20 +159,6 @@ def main(content):
 			payload_value = loads(content['object']['payload'])['casino']
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
 			sending_params['keyboard'] = keyboard
-			requests.post('https://api.vk.com/method/messages.send', data=sending_params)
-			return 'ok'
-		if message[0] == '!привет':
-			sending_params['message'] = f"{nickname}, привет!"
-		elif message[0] == '!анекдот':
-			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
-		elif message[0] == '!скажи':
-			sending_params['message'] = message[1]
-		elif message[0] == '!ник':
-			if len(message[1]) <= 30:
-				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
-				sending_params['message'] = f"{nickname}, Ваш новый ник: [id{vk_id}|{message[1]}]!"
-			else:
-				sending_params['message'] = f'{nickname}, Ошибка! Длина ника не должна превышать 30 символов!'
 		elif message[0] == '!профиль':
 			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 			sistime = datetime.now()
@@ -192,11 +178,23 @@ def main(content):
 		elif message[0] == '!казино':
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id)}"
 			sending_params['keyboard'] = keyboard
+		elif message[0] == '!ник':
+			if len(message[1]) <= 30:
+				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
+				sending_params['message'] = f"{nickname}, Ваш новый ник: [id{vk_id}|{message[1]}]!"
+			else:
+				sending_params['message'] = f'{nickname}, Ошибка! Длина ника не должна превышать 30 символов!'
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
+		elif message[0] == '!анекдот':
+			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
+		elif message[0] == '!скажи':
+			sending_params['message'] = message[1]
+		elif message[0] == '!привет':
+			sending_params['message'] = f"{nickname}, привет!"
 		elif not message[0] in refer:
 			return 'ok'
 		requests.post('https://api.vk.com/method/messages.send', data=sending_params)  # sending message
