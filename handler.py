@@ -8,7 +8,7 @@ token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
-refer = ('бот', '!бот', 'помощь', 'помочь', 'хелп', 'хелпа', '!помощь', 'команды', '!команды', 'эй', 'начать')
+refer = ('бот', '!бот', 'помощь', 'help', 'хелп', '!помощь', 'команды', '!команды', 'начать')
 factor = (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4)
 bonus = (250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000)
 bonuswait = 21600  # from 1 to 86400
@@ -75,7 +75,12 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
-
+def own(info):
+	string = "&#128273;Ваше имущество:"
+	own = {'phone': info['phone'], 'car': info['car'], 'home': info['home'], 'business': info['business']}
+	for i in own:
+		string += f'\n{i} - {own[i]}'
+	return string
 def get_bonus(vk_id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
@@ -160,7 +165,10 @@ def main(content):
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
 			sending_params['keyboard'] = keyboard
 		elif message[0] == '!профиль':
-			profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
+			profile_info = db.select(f"""SELECT u.id, u.vk_id, u.name, u.balance, u.bonus_time, 
+			u.reg_time, p.name as phone, c.name as car, h.name as home, b.name as business 
+			FROM users u, phones p, cars c, homes h, business b 
+			WHERE vk_id = {vk_id} AND u.phone = p.id AND u.car = c.id AND u.home=h.id AND u.business=b.id;""")[0]
 			sistime = datetime.now()
 			if sistime.timestamp() >= profile_info['bonus_time'].timestamp():
 				bonusavailable = 'уже доступен!'
@@ -174,6 +182,7 @@ def main(content):
 			&#128176;Баланс: {profile_info['balance']} монет
 			&#9203;Системное время: {sistime.strftime('%H:%M:%S, %Y %B %d')}
 			&#8986;Бонус через: {bonusavailable}
+			{own(profile_info)}
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
 			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id)}"
