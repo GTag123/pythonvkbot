@@ -111,7 +111,7 @@ def shop(params, id, balance):
 	if len(params) < 2:
 		return shoplist()
 	kind = {'1': ('phone', 'phones'), '2': ('car', 'cars'), '3': ('home', 'homes'), '4': ('business', 'business')}
-	if db.select(f"SELECT {kind[params[0]][0]} FROM own WHERE id = {id}")[0][0] == 0:
+	if db.select(f"SELECT {kind[params[0]][0]} FROM own WHERE id = {id}")[0][0] != 0:
 		return f"у вас уже есть имущество данного вида.\nДля покупки необходимо продать его - !продать"
 	try:
 		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]} AND id >= 1;")[0]
