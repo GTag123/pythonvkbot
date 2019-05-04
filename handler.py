@@ -94,7 +94,11 @@ def shoplist():
 def shop(params, id):
 	params = params.split()
 	kind = {'1': ('phone', 'phones'), '2': ('car', 'cars'), '3': ('home', 'homes'), '4': ('business', 'business')}
-	product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]};")[0]
+	try:
+		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]};")
+		print(product)
+	except KeyError:
+		return "Такой категории товаров не существует! Список - !магазин"
 	db.new_action(f"UPDATE users SET balance = balance - {product['price']} WHERE id = {id}")
 	db.new_action(f"UPDATE own SET {kind[params[0]][0]} = {product['id']} WHERE id = {id};")
 	return f"вы успешно купили {product['name']} за {product['price']} монет"
