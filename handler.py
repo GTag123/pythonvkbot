@@ -251,7 +251,7 @@ def main(content):
 		elif message[0] == '!магазин':
 			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'])}"
 		elif message[0] == '!продать':
-			sending_params = f"{nickname}, {sell(profile_info['id'], message[1])}"
+			sending_params = f"{nickname}, ku" # {sell(profile_info['id'], message[1])}
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
