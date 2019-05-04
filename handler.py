@@ -97,7 +97,7 @@ def shop(params, id):
 		return shoplist()
 	kind = {'1': ('phone', 'phones'), '2': ('car', 'cars'), '3': ('home', 'homes'), '4': ('business', 'business')}
 	try:
-		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]};")[0]
+		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]}; AND id >= 1")[0]
 		print(product)
 	except (KeyError, IndexError):
 		return "такой категории/товара не существует!\nСписок товаров - !магазин"
