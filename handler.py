@@ -248,7 +248,7 @@ def main(content):
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(profile_info['id'])}"
 		elif message[0] == '!магазин':
-			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'])}"
+			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'], profile_info['balance'])}"
 		elif message[0] == '!продать':
 			sending_params['message'] = f"{nickname}, {sell(profile_info['id'], message[1])}"
 		elif message[0] == '!репорт':
