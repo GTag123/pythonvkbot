@@ -85,6 +85,7 @@ def sell(id, message):
 		db.new_action(f"UPDATE users SET balance = balance + ({thinginfo['price'] * 0.6}); UPDATE own SET {type[0]} = DEFAULT WHERE id = {id};""")
 		return f"вы успешно продали {thinginfo['name']} за {thinginfo['price'] * 0.6} монет (60% стоимости)\nДля покупки нового имущества - !магазин"
 	except KeyError:
+		print(message)
 		return "1"
 
 def shoplist():
