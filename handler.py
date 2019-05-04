@@ -83,7 +83,7 @@ def sell(id, message):
 		if thinginfo['name'] == 'NULL':
 			return "ошибка, у вас нет такого вида имущества, для просмотра имущества - !профиль"
 		db.new_action(f"UPDATE users SET balance = balance + ({thinginfo['price'] * 0.6}); UPDATE own SET {type[0]} = DEFAULT WHERE id = {id};""")
-		return f"вы успешно продали {thinginfo['name']} за {thinginfo['price'] * 0.6} монет (60% стоимости)\nДля покупки нового имущества - !магазин"
+		return f"вы успешно продали {thinginfo['name']} за {thinginfo['price'] * 0.7} монет (70% стоимости)\nДля покупки нового имущества - !магазин"
 	except KeyError:
 		return "ошибка, чтобы продать напишите вид имущества: !продать [телефон/авто/дом/бизнес]\nНапример: !продать авто - чтобы продать ваш автомобиль"
 
@@ -103,18 +103,18 @@ def shoplist():
 	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - чтобы купить BMW x7'
 	return string
 
-def shop(params, id):
+def shop(params, id, balance):
 	params = params.split()
 	if len(params) < 2:
 		return shoplist()
 	kind = {'1': ('phone', 'phones'), '2': ('car', 'cars'), '3': ('home', 'homes'), '4': ('business', 'business')}
 	try:
 		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]} AND id >= 1;")[0]
-		print(product)
 	except (KeyError, IndexError):
 		return "такой категории/товара не существует!\nСписок товаров - !магазин"
-	db.new_action(f"UPDATE users SET balance = balance - {product['price']} WHERE id = {id}")
-	db.new_action(f"UPDATE own SET {kind[params[0]][0]} = {product['id']} WHERE id = {id};")
+	if balance < product['price']:
+		return f" на вашем счёте недостаточно средств!\nВам не хватает {product['price'] - balance} монет!"
+	db.new_action(f"UPDATE users SET balance = balance - {product['price']} WHERE id = {id}; UPDATE own SET {kind[params[0]][0]} = {product['id']} WHERE id = {id};")
 	return f"вы успешно купили {product['name']} за {product['price']} монет"
 
 def own(id):
