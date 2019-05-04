@@ -75,6 +75,7 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
+
 def sell(id, message):
 	message = message.split()[0].lower()
 	try:
@@ -85,7 +86,8 @@ def sell(id, message):
 		db.new_action(f"UPDATE users SET balance = balance + ({thinginfo['price'] * 0.6}); UPDATE own SET {type[0]} = DEFAULT WHERE id = {id};""")
 		return f"вы успешно продали {thinginfo['name']} за {thinginfo['price'] * 0.7} монет (70% стоимости)\nДля покупки нового имущества - !магазин"
 	except KeyError:
-		return "ошибка, чтобы продать напишите вид имущества: !продать [телефон/авто/дом/бизнес]\nНапример: !продать авто - чтобы продать ваш автомобиль"
+		return "ошибка, чтобы продать напишите вид имущества:\n!продать [телефон/авто/дом/бизнес]\nНапример: !продать авто - чтобы продать ваш автомобиль"
+
 
 def shoplist():
 	string = '\nМагазин:\n&#9742;1. Телефоны:'
@@ -103,11 +105,14 @@ def shoplist():
 	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - чтобы купить BMW x7'
 	return string
 
+
 def shop(params, id, balance):
 	params = params.split()
 	if len(params) < 2:
 		return shoplist()
 	kind = {'1': ('phone', 'phones'), '2': ('car', 'cars'), '3': ('home', 'homes'), '4': ('business', 'business')}
+	if db.select(f"SELECT {kind[params[0]][0]} FROM own WHERE id = {id}")[0][0] == 0:
+		return f"у вас уже есть имущество данного вида.\nДля покупки необходимо продать его - !продать"
 	try:
 		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]} AND id >= 1;")[0]
 	except (KeyError, IndexError):
@@ -116,6 +121,7 @@ def shop(params, id, balance):
 		return f" на вашем счёте недостаточно средств!\nВам не хватает {product['price'] - balance} монет!"
 	db.new_action(f"UPDATE users SET balance = balance - {product['price']} WHERE id = {id}; UPDATE own SET {kind[params[0]][0]} = {product['id']} WHERE id = {id};")
 	return f"вы успешно купили {product['name']} за {product['price']} монет"
+
 
 def own(id):
 	string = '&#128273;Ваше имущество:'
@@ -139,6 +145,7 @@ def own(id):
 		return string
 	return 'На данный момент у вас нет имущества!\nЧтобы купить - !магазин'
 
+
 def get_bonus(id):
 	bonus_time = db.select(f"SELECT bonus_time FROM users where id = {id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
@@ -148,6 +155,7 @@ def get_bonus(id):
 	win = choice(bonus)
 	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE id = {id};")
 	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + bonuswait).strftime('%Y %B %d %H:%M:%S')}"
+
 
 def casino(bet, id, balance):
 	if balance < bet:
@@ -161,6 +169,7 @@ def casino(bet, id, balance):
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nК сожалению вы потеряли {abs(win)} монет!"
 	else:
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
+
 
 def getbet(message, balance, id, payload=False):
 	if not payload:
@@ -181,6 +190,7 @@ def getbet(message, balance, id, payload=False):
 		return casino(balance // 4, id, balance)
 	else:
 		return casino(int(payload), id, balance)
+
 
 def main(content):
 	if content['secret'] != secret:
