@@ -83,7 +83,7 @@ def sell(id, message):
 		if thinginfo['name'] == 'NULL':
 			return "ошибка, у вас нет такого вида имущества, для просмотра имущества - !профиль"
 		db.new_action(f"UPDATE users SET balance = balance + ({thinginfo['price'] * 0.6}); UPDATE own SET {type[0]} = DEFAULT WHERE id = {id};""")
-		return f"вы успешно продали «{thinginfo['name']}» за {thinginfo['price'] * 0.6} монет (60% стоимости)\nДля покупки нового имущества - !магазин"
+		return f"вы успешно продали {thinginfo['name']} за {thinginfo['price'] * 0.6} монет (60% стоимости)\nДля покупки нового имущества - !магазин"
 	except KeyError:
 		return "ошибка, чтобы продать напишите вид имущества: !продать [телефон/авто/дом/бизнес]\nНапример: !продать авто - чтобы продать ваш автомобиль"
 
@@ -249,7 +249,7 @@ def main(content):
 			sending_params['message'] = f"{nickname}, {get_bonus(profile_info['id'])}"
 		elif message[0] == '!магазин':
 			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'])}"
-		elif message[0] == 'продать':
+		elif message[0] == '!продать':
 			sending_params = f"{nickname}, {sell(profile_info['id'], message[1])}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
