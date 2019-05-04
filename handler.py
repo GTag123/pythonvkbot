@@ -22,7 +22,7 @@ helptext = """Привет! Вот мои команды:
 			&#128521;!привет - бот скажет тебе привет&#128521;
 			&#128514;!анекдот - бот расскажет анекдот&#128514;
 			&#128079;!скажи [фраза]- бот повторит твою фразу&#128079;\n
-			&#8252;!репорт [текст] - откправить сообщение админу&#8252;"""
+			&#8252;!репорт [текст] - отправить сообщение админу&#8252;"""
 keyboard = dumps({
 	"one_time": False,
 	"buttons": [
@@ -219,8 +219,7 @@ def main(content):
 				'user_ids': vk_id,
 				'access_token': token,
 				'v': '5.95'}).json()['response'][0]
-			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']}));")
-			db.new_action("INSERT INTO own DEFAULT VALUES;")
+			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']})); INSERT INTO own DEFAULT VALUES;")
 		profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 		nickname = '[id%s|%s]' % (vk_id, profile_info['name'])
 		sending_params = {
