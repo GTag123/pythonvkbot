@@ -169,6 +169,8 @@ def get_bonus(id):
 
 
 def casino(bet, id, balance):
+	if not balance:
+		return f"у вас нет денег! Вы можете продать своё имущество либо взять бонус"
 	if balance < bet:
 		return f"\nВаша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
 	x = choice(factor)
