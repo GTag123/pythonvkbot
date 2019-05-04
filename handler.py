@@ -80,8 +80,6 @@ def sell(id, message):
 	try:
 		type = {'телефон': ('phone', 'phones'), 'дом': ('home', 'homes'), 'авто': ('car', 'cars'), 'бизнес': ('business', 'business')}[message]
 		thinginfo = db.select("SELECT name, price FROM %s WHERE id = %d" % (type[1], db.select(f"SELECT {type[0]} FROM own WHERE id = {id};")[0][0]))[0]
-		print(thinginfo)
-		print(type(thinginfo))
 		if thinginfo['name'] == 'NULL':
 			return "ошибка, у вас нет такого вида имущества, для просмотра имущества - !профиль"
 		db.new_action(f"UPDATE users SET balance = balance + ({thinginfo['price'] * 0.6}); UPDATE own SET {type[0]} = DEFAULT WHERE id = {id};""")
