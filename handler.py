@@ -112,7 +112,7 @@ def shoplist():
 		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
 	string += '\n\n&#127978;4. Бизнесы:'
 	for i in db.select("SELECT * FROM business WHERE id >= 1 ORDER BY id ASC;"):
-		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет.\nПрибыль: {i['profit']} монет в час"
+		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет.\n&#12288;&#12288;Прибыль: {i['profit']} монет в час"
 	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - чтобы купить BMW x7'
 	return string
 
