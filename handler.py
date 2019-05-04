@@ -87,7 +87,7 @@ def shoplist():
 		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
 	string += '\n\n&#127978;4. Бизнесы:'
 	for i in db.select("SELECT * FROM business WHERE id >= 1 ORDER BY id ASC;"):
-		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет. Прибыль: {i['profit']} монет в час"
+		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет.\nПрибыль: {i['profit']} монет в час"
 	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - чтобы купить BMW x7'
 	return string
 
@@ -127,22 +127,22 @@ def own(id):
 		return string
 	return 'На данный момент у вас нет имущества!\nЧтобы купить - !магазин'
 
-def get_bonus(vk_id):
-	bonus_time = db.select(f"SELECT bonus_time FROM users where vk_id = {vk_id};")[0]['bonus_time'].timestamp()  # 6 hours
+def get_bonus(id):
+	bonus_time = db.select(f"SELECT bonus_time FROM users where id = {id};")[0]['bonus_time'].timestamp()  # 6 hours
 	now = datetime.now().timestamp()
 	if now < bonus_time:
 		return f"""вы можете взять бонус не раньше: {datetime.fromtimestamp(bonus_time).strftime('%H:%M:%S, %Y %B %d')}
 		Осталось подождать: {datetime.fromtimestamp(bonus_time - now).strftime('%H:%M:%S')}"""
 	win = choice(bonus)
-	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE vk_id = {vk_id};")
+	db.new_action(f"UPDATE users SET balance = balance + {win}, bonus_time = to_timestamp({now + bonuswait}) WHERE id = {id};")
 	return f"поздравлем! Вы получили {win} монет.\nСледующий бонус в: {datetime.fromtimestamp(now + bonuswait).strftime('%Y %B %d %H:%M:%S')}"
 
-def casino(bet, vk_id, balance):
+def casino(bet, id, balance):
 	if balance < bet:
 		return f"\nВаша ставка - {bet} монет - больше, чем ваш баланс - {balance} монет! Уменьшите ставку!"
 	x = choice(factor)
 	win = round(bet * x) - bet
-	db.new_action(f"UPDATE users SET balance = {balance + win} WHERE vk_id = {vk_id};")
+	db.new_action(f"UPDATE users SET balance = {balance + win} WHERE id = {id};")
 	if x > 1:
 		return f"\nПоздравляем!\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы получили {win} монет!"
 	elif x < 1:
@@ -150,25 +150,25 @@ def casino(bet, vk_id, balance):
 	else:
 		return f"\nВы поставили {bet} монет\nВаш коэффициент: x{x}\nВы ничего не выиграли и не потеряли&#128528;"
 
-def getbet(message, balance, vk_id, payload=False):
+def getbet(message, balance, id, payload=False):
 	if not payload:
 		try:
-			return casino(abs(int(message)), vk_id, balance)
+			return casino(abs(int(message)), id, balance)
 		except ValueError:
 			if message.lower() in ('*', 'всё', 'все', 'all'):
-				return casino(balance, vk_id, balance)
+				return casino(balance, id, balance)
 			elif message.lower() in ('1/2', 'половина'):
-				return casino(balance // 2, vk_id, balance)
+				return casino(balance // 2, id, balance)
 			else:
 				return 'ошибка! Ставка должна быть целым числом!'
 	if payload == 'all':
-		return casino(balance, vk_id, balance)
+		return casino(balance, id, balance)
 	elif payload == 'half':
-		return casino(balance // 2, vk_id, balance)
+		return casino(balance // 2, id, balance)
 	elif payload == 'quarter':
-		return casino(balance // 4, vk_id, balance)
+		return casino(balance // 4, id, balance)
 	else:
-		return casino(int(payload), vk_id, balance)
+		return casino(int(payload), id, balance)
 
 def main(content):
 	if content['secret'] != secret:
@@ -186,8 +186,8 @@ def main(content):
 				'v': '5.95'}).json()['response'][0]
 			db.new_action(f"INSERT INTO users (vk_id, name, balance, reg_time) VALUES ({vk_id}, '{vkname['first_name']}', 1000, to_timestamp({content['object']['date']}));")
 			db.new_action("INSERT INTO own DEFAULT VALUES;")
-		nickname = '[id%s|%s]' % (vk_id, db.select(f"SELECT name FROM users WHERE vk_id = {vk_id};")[0]['name'])
-		balance = db.select(f"SELECT balance FROM users WHERE vk_id = {vk_id};")[0]['balance']
+		profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
+		nickname = '[id%s|%s]' % (vk_id, profile_info['name'])
 		sending_params = {
 			'peer_id': content['object']['peer_id'],
 			'message': """Привет! Вот мои команды:
@@ -204,10 +204,9 @@ def main(content):
 			'v': '5.95',
 			'random_id': randint(0, 99999)
 		}
-		profile_info = db.select(f"SELECT * FROM users WHERE vk_id = {vk_id};")[0]
 		if 'payload' in content['object']:
 			payload_value = loads(content['object']['payload'])['casino']
-			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id, payload=payload_value)}"
+			sending_params['message'] = f"{nickname}, {getbet(message[1], profile_info['balance'], profile_info['id'], payload=payload_value)}"
 			sending_params['keyboard'] = keyboard
 		elif message[0] == '!профиль':
 			sistime = datetime.now()
@@ -219,23 +218,23 @@ def main(content):
 			&#8265;{nickname}, Ваш профиль:
 			&#127380;ID: {profile_info['id']}
 			&#10004;Вконтакте ID: {profile_info['vk_id']}
-			&#128310;Ник: [id{vk_id}|{profile_info['name']}]
+			&#128310;Ник: {nickname}
 			&#128176;Баланс: {profile_info['balance']} монет
 			&#9203;Системное время: {sistime.strftime('%H:%M:%S, %Y %B %d')}
 			&#8986;Бонус через: {bonusavailable}
 			\n{own(profile_info['id'])}\n
 			&#128197;Дата регистрации: {profile_info['reg_time']}"""
 		elif message[0] == '!казино':
-			sending_params['message'] = f"{nickname}, {getbet(message[1], balance, vk_id)}"
+			sending_params['message'] = f"{nickname}, {getbet(message[1], profile_info['balance'], profile_info['id'])}"
 			sending_params['keyboard'] = keyboard
 		elif message[0] == '!ник':
 			if len(message[1]) <= 30:
-				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE vk_id = {vk_id};")
+				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE id = {profile_info['id']};")
 				sending_params['message'] = f"{nickname}, Ваш новый ник: [id{vk_id}|{message[1]}]!"
 			else:
 				sending_params['message'] = f'{nickname}, Ошибка! Длина ника не должна превышать 30 символов!'
 		elif message[0] == '!бонус':
-			sending_params['message'] = f"{nickname}, {get_bonus(vk_id)}"
+			sending_params['message'] = f"{nickname}, {get_bonus(profile_info['id'])}"
 		elif message[0] == '!магазин':
 			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'])}"
 		elif message[0] == '!репорт':
