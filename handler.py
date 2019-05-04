@@ -75,6 +75,18 @@ keyboard = dumps({
 
 db = database.Database(DATABASE_URL)
 
+def sell(id, message):
+	message = message.split()[0].lower()
+	try:
+		type = {'телефон': ('phone', 'phones'), 'дом': ('home', 'homes'), 'авто': ('car', 'cars'), 'бизнес': ('business', 'business')}[message]
+		thinginfo = db.select("SELECT name, price FROM %s WHERE id = %d") % (type[1], db.select(f"SELECT {type[0]} FROM own WHERE id = {id};")[0][0])
+		if thinginfo['name'] == 'NULL':
+			return "ошибка, у вас нет такого вида имущества, для просмотра имущества - !профиль"
+		db.new_action(f"UPDATE users SET balance = balance + ({thinginfo['price'] * 0.6}); UPDATE own SET {type[0]} = DEFAULT WHERE id = {id};""")
+		return f"вы успешно продали «{thinginfo['name']}» за {thinginfo['price'] * 0.6} монет (60% стоимости)\nДля покупки нового имущества - !магазин"
+	except KeyError:
+		return "ошибка, чтобы продать напишите вид имущества: !продать [телефон/авто/дом/бизнес]\nНапример: !продать авто - чтобы продать ваш автомобиль"
+
 def shoplist():
 	string = '\nМагазин:\n&#9742;1. Телефоны:'
 	for i in db.select("SELECT * FROM phones WHERE id >= 1 ORDER BY id ASC;"):
@@ -230,13 +242,15 @@ def main(content):
 		elif message[0] == '!ник':
 			if len(message[1]) <= 30:
 				db.new_action(f"UPDATE users SET name = '{message[1]}' WHERE id = {profile_info['id']};")
-				sending_params['message'] = f"{nickname}, Ваш новый ник: [id{vk_id}|{message[1]}]!"
+				sending_params['message'] = f"{nickname}, ваш новый ник: [id{vk_id}|{message[1]}]!"
 			else:
-				sending_params['message'] = f'{nickname}, Ошибка! Длина ника не должна превышать 30 символов!'
+				sending_params['message'] = f'{nickname}, ошибка! Длина ника не должна превышать 30 символов!'
 		elif message[0] == '!бонус':
 			sending_params['message'] = f"{nickname}, {get_bonus(profile_info['id'])}"
 		elif message[0] == '!магазин':
 			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'])}"
+		elif message[0] == 'продать':
+			sending_params = f"{nickname}, {sell(profile_info['id'], message[1])}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
