@@ -76,18 +76,18 @@ keyboard = dumps({
 db = database.Database(DATABASE_URL)
 
 def shoplist():
-	string = '\nМагазин:\n1. Телефоны:'
+	string = '\nМагазин:\n&#9742;1. Телефоны:'
 	for i in db.select("SELECT * FROM phones WHERE id >= 1 ORDER BY id ASC;"):
-		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
-	string += '\n\n2. Автомобили:'
+		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
+	string += '\n\n&#128665;2. Автомобили:'
 	for i in db.select("SELECT * FROM cars WHERE id >= 1 ORDER BY id ASC;"):
-		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
-	string += '\n\n3. Недвижемость:'
+		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
+	string += '\n\n&#127968;3. Недвижемость:'
 	for i in db.select("SELECT * FROM homes WHERE id >= 1 ORDER BY id ASC;"):
-		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
-	string += '\n\n4. Бизнесы:'
+		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет"
+	string += '\n\n&#127978;4. Бизнесы:'
 	for i in db.select("SELECT * FROM business WHERE id >= 1 ORDER BY id ASC;"):
-		string += f"\n&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет. Прибыль: {i['profit']} монет в час"
+		string += f"\n&#12288;&#12288;{i['id']}. {i['name']}. Цена: {i['price']} монет. Прибыль: {i['profit']} монет в час"
 	string += '\n\nДля покупки введите !магазин [вид товара] [id товара]\nНапример: !магазин 2 6 - чтобы купить BMW x7'
 	return string
 
