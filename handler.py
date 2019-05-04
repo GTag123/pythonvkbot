@@ -97,8 +97,8 @@ def shop(params, id):
 	try:
 		product = db.select(f"SELECT * FROM {kind[params[0]][1]} WHERE id = {params[1]};")[0]
 		print(product)
-	except KeyError:
-		return "такой категории товаров не существует! Список - !магазин"
+	except (KeyError, IndexError):
+		return "такой категории/товара не существует! Список - !магазин"
 	db.new_action(f"UPDATE users SET balance = balance - {product['price']} WHERE id = {id}")
 	db.new_action(f"UPDATE own SET {kind[params[0]][0]} = {product['id']} WHERE id = {id};")
 	return f"вы успешно купили {product['name']} за {product['price']} монет"
