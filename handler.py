@@ -88,7 +88,7 @@ keyboard = dumps({
 db = database.Database(DATABASE_URL)
 
 
-def givemoney(message, id, balance):
+def give_money(message, id, balance):
 	try:
 		message = list(map(int, message.split()))
 		toid = message[0]
@@ -97,10 +97,11 @@ def givemoney(message, id, balance):
 		return "произошла ошибка! id/сумма должна быть целым числом"
 	if amount > balance:
 		return "у вас нет столько денег!"
-	if not db.select(f"SELECT exists(SELECT 1 FROM users WHERE id = {toid});")[0]['exists']:
+	try:
+		tonick = db.select(f"SELECT name, vk_id FROM users WHERE id = {toid}")[0]
+	except IndexError:
 		return "пользователя с таким ID не существует!"
 	db.new_action(f"UPDATE users SET balance = balance - {amount} WHERE id = {id}; UPDATE users SET balance = balance + {amount} WHERE id = {toid};")
-	tonick = db.select(f"SELECT name, vk_id FROM users WHERE id = {toid}")[0]
 	return f"вы успешно передали {amount} монет пользователю [id{tonick['vk_id']}|{tonick['name']}]!\nВаш баланс: {balance - amount} монет"
 
 
@@ -283,7 +284,7 @@ def main(content):
 		elif message[0] == '!продать':
 			sending_params['message'] = f"{nickname}, {sell(profile_info['id'], message[1])}"
 		elif message[0] == '!передать':
-			sending_params['message'] = f"{nickname}, {givemoney(message[1], profile_info['id'], profile_info['balance'])}"
+			sending_params['message'] = f"{nickname}, {give_money(message[1], profile_info['id'], profile_info['balance'])}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
