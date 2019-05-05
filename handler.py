@@ -4,6 +4,7 @@ import requests
 from json import dumps, loads
 from random import randint, choice
 from datetime import datetime
+import wikiparser
 token = getenv('apitoken')
 secret = getenv('secret')
 confirm = getenv('confirmation')
@@ -20,6 +21,7 @@ helptext = """Привет! Вот мои команды:
 			&#127873;!передать [ID] [сумма] - передать деньги пользователю&#127873;
 			&#128717;!магазин - магазин&#128717;
 			&#128184;!продать [телефон/дом/авто/бизнес] - продать имущество
+			&#128214;!вики [что искать?] - поиск по википедии&#128214;
 			&#128521;!привет - бот скажет тебе привет&#128521;
 			&#128514;!анекдот - бот расскажет анекдот&#128514;
 			&#128079;!скажи [фраза]- бот повторит твою фразу&#128079;\n
@@ -284,6 +286,11 @@ def main(content):
 			sending_params['message'] = f"{nickname}, {sell(profile_info['id'], message[1])}"
 		elif message[0] == '!передать':
 			sending_params['message'] = f"{nickname}, {give_money(message[1], profile_info['id'], profile_info['balance'])}"
+		elif message[0] == '!вики':
+			if message[1] != 'N/A':
+				sending_params['message'] = f"{nickname}, {wikiparser.getlinks(message[1])}"
+			else:
+				sending_params['message'] = f"{nickname}, вы не указали что искать!"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
