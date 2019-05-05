@@ -9,7 +9,7 @@ secret = getenv('secret')
 confirm = getenv('confirmation')
 DATABASE_URL = getenv('DATABASE_URL')
 refer = ('бот', '!бот', 'помощь', 'help', 'хелп', '!помощь', 'команды', '!команды', 'начать')
-factor = (0, 0.01, 0.02, 0.05, 0.25, 0.5, 0.75, 0.75, 1, 1.25, 1.25, 1.3, 1.5, 1.5, 2, 2.5, 3, 4, 5)
+factor = (0, 0.01, 0.02, 0.05, 0.25, 0.5, 0.75, 0.75, 0.9, 1, 1.25, 1.25, 1.3, 1.5, 1.5, 2, 2.5, 3, 4, 5)
 bonus = (5000, 10000, 15000, 5000, 10000, 15000, 25000, 25000, 40000, 50000, 75000, 100000, 150000)
 bonuswait = 21600  # from 1 to 86400
 helptext = """Привет! Вот мои команды:
@@ -17,6 +17,7 @@ helptext = """Привет! Вот мои команды:
 			&#128394;!ник [ваш ник]- установить новый ник&#128394;
 			&#11088;!бонус - взять бонус(раз в 6 часов)&#11088;
 			&#128177;!казино [ставка] - казино&#128177;
+			&#127873;!передать [ID] [сумма] - передать деньги пользователю&#127873;
 			&#128717;!магазин - магазин&#128717;
 			&#128184;!продать [телефон/дом/авто/бизнес] - продать имущество
 			&#128521;!привет - бот скажет тебе привет&#128521;
@@ -85,6 +86,22 @@ keyboard = dumps({
 }, ensure_ascii=False)
 
 db = database.Database(DATABASE_URL)
+
+
+def givemoney(message, id, balance):
+	try:
+		message = list(map(int, message.split()))
+		toid = message[0]
+		amount = abs(message[1])
+	except (ValueError, IndexError):
+		return "произошла ошибка! id/сумма должна быть целым числом"
+	if amount > balance:
+		return "у вас нет столько денег!"
+	if not db.select(f"SELECT exists(SELECT 1 FROM users WHERE id = {toid});")[0]['exists']:
+		return "пользователя с таким ID не существует!"
+	db.new_action(f"UPDATE users SET balance = balance - {amount} WHERE id = {id}; UPDATE users SET balance = balance + {amount} WHERE id = {toid};")
+	tonick = db.select(f"SELECT name, vk_id FROM users WHERE id = {toid}")[0]
+	return f"вы успешно передали {amount} монет пользователю [id{tonick['vk_id']}|{tonick['name']}]!\nВаш баланс: {balance - amount} монет"
 
 
 def sell(id, message):
@@ -265,6 +282,8 @@ def main(content):
 			sending_params['message'] = f"{nickname}, {shop(message[1], profile_info['id'], profile_info['balance'])}"
 		elif message[0] == '!продать':
 			sending_params['message'] = f"{nickname}, {sell(profile_info['id'], message[1])}"
+		elif message[0] == '!передать':
+			sending_params['message'] = f"{nickname}, {givemoney(message[1], profile_info['id'], profile_info['balance'])}"
 		elif message[0] == '!репорт':
 			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
