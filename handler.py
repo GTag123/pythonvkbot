@@ -97,11 +97,10 @@ def give_money(message, id, balance):
 		return "произошла ошибка! id/сумма должна быть целым числом"
 	if amount > balance:
 		return "у вас нет столько денег!"
-	try:
-		tonick = db.select(f"SELECT name, vk_id FROM users WHERE id = {toid}")[0]
-	except IndexError:
+	if not db.select(f"SELECT exists(SELECT 1 FROM users WHERE id = {toid});")[0]['exists']:
 		return "пользователя с таким ID не существует!"
 	db.new_action(f"UPDATE users SET balance = balance - {amount} WHERE id = {id}; UPDATE users SET balance = balance + {amount} WHERE id = {toid};")
+	tonick = db.select(f"SELECT name, vk_id FROM users WHERE id = {toid}")[0]
 	return f"вы успешно передали {amount} монет пользователю [id{tonick['vk_id']}|{tonick['name']}]!\nВаш баланс: {balance - amount} монет"
 
 
