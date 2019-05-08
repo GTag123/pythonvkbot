@@ -288,11 +288,11 @@ def main(content):
 			sending_params['message'] = f"{nickname}, {give_money(message[1], profile_info['id'], profile_info['balance'])}"
 		elif message[0] == '!вики':
 			if message[1] != 'N/A':
-				sending_params['message'] = f"{nickname}, {wikiparser.getlinks(message[1])}"
+				sending_params['message'] = f"{nickname}, {wikiparser.article(message[1])}"
 			else:
 				sending_params['message'] = f"{nickname}, вы не указали что искать!"
 		elif message[0] == '!репорт':
-			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от полозователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
+			requests.post('https://api.vk.com/method/messages.send', data={'peer_id': 239188570, 'message': f"Новое сообщение от пользователя {nickname}:\n{message[1]}", 'access_token': token, 'v': '5.95', 'random_id': randint(0, 99999)})
 			sending_params['message'] = f"Сообщение:\n{message[1]}\nбыло успешно отправлено админу!"
 		elif message[0] == '!анекдот':
 			sending_params['message'] = requests.post('http://rzhunemogu.ru/RandJSON.aspx?CType=1').text[12:-2]
