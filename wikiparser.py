@@ -17,6 +17,6 @@ def article(query):
 			body = soup.find('div', class_='mw-parser-output').find('p').get_text()
 		except:
 			body = 'Body error'
-		return f"{title}\n{body}\nПодробнее: {link}"
+		return f"\n{title}:\n{body}\nПодробнее: {link}"
 	else:
 		return 'Запрошенная статья не найдена!'
