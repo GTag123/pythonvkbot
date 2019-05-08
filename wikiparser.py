@@ -15,11 +15,13 @@ def article(query):
 			title = 'Title error'
 		try:
 			body = soup.find('div', class_='mw-parser-output').find('p')
-			body.style.decompose()
+			try:
+				body.style.decompose()
+			except:
+				pass
 			body = body.get_text()
 		except:
 			body = 'Body error'
 		return f"\n{title}:\n&#12288;{body}\nПодробнее: {link}"
 	else:
 		return 'Запрошенная статья не найдена!'
-print(article('россия'))
