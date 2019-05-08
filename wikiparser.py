@@ -14,9 +14,12 @@ def article(query):
 		except:
 			title = 'Title error'
 		try:
-			body = soup.find('div', class_='mw-parser-output').find('p').get_text()
+			body = soup.find('div', class_='mw-parser-output').find('p')
+			body.style.decompose()
+			body = body.get_text()
 		except:
 			body = 'Body error'
-		return f"\n{title}:\n{body}\nПодробнее: {link}"
+		return f"\n{title}:\n&#12288;{body}\nПодробнее: {link}"
 	else:
 		return 'Запрошенная статья не найдена!'
+print(article('россия'))
